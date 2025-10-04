@@ -373,8 +373,15 @@ class VoiceBot:
             
         except Exception as e:
             logging.error(f"TTS error: {e}")
-            if self.on_error:
-                self.on_error(e)
+            # Fallback to system TTS
+            try:
+                import subprocess
+                subprocess.run(["say", text], check=True)
+                logging.info("Fallback TTS (system) succeeded")
+            except Exception as e2:
+                logging.error(f"Fallback TTS also failed: {e2}")
+                if self.on_error:
+                    self.on_error(e)
     
     def speak_async(self, text: str, language: Optional[str] = None):
         """

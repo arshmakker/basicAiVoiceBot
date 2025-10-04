@@ -46,6 +46,7 @@ class PyTTSX3TTS:
         
         self.language = language
         self.engine = None
+        self.is_speaking = False
         self._initialize_engine()
     
     def _initialize_engine(self):
@@ -91,7 +92,13 @@ class PyTTSX3TTS:
         if not text.strip():
             return
         
+        # Prevent multiple simultaneous speech operations
+        if self.is_speaking:
+            logging.warning("pyttsx3 already speaking, skipping new speech request")
+            return
+        
         try:
+            self.is_speaking = True
             self.engine.say(text)
             if blocking:
                 self.engine.runAndWait()
@@ -107,6 +114,8 @@ class PyTTSX3TTS:
         except Exception as e:
             logging.error(f"pyttsx3 speak error: {e}")
             raise TTSError(f"Failed to speak with pyttsx3: {e}")
+        finally:
+            self.is_speaking = False
     
     def get_available_languages(self) -> List[str]:
         """Get available languages (pyttsx3 has limited language support)"""

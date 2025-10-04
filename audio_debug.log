@@ -1,0 +1,99 @@
+2025-10-04 16:07:35,813 - audio_debug - DEBUG - [vscode|iTerm:False] Initializing AudioRecorder
+2025-10-04 16:07:35,813 - audio_debug - DEBUG - [vscode|iTerm:False] Sample rate: 16000, Chunk size: 1024
+2025-10-04 16:07:35,813 - audio_debug - DEBUG - [vscode|iTerm:False] Creating PyAudio instance
+2025-10-04 16:07:35,907 - audio_debug - DEBUG - [vscode|iTerm:False] PyAudio instance created
+2025-10-04 16:07:35,907 - audio_debug - DEBUG - [vscode|iTerm:False] Finding input device
+2025-10-04 16:07:35,907 - audio_debug - DEBUG - [vscode|iTerm:False] Starting input device search
+2025-10-04 16:07:35,907 - audio_debug - DEBUG - [vscode|iTerm:False] Found 4 audio devices
+2025-10-04 16:07:35,907 - audio_debug - DEBUG - [vscode|iTerm:False] Input device 0: Arshdeep’s iPhone Microphone
+2025-10-04 16:07:35,907 - audio_debug - DEBUG - [vscode|iTerm:False] Input device 1: MacBook Air Microphone
+2025-10-04 16:07:35,908 - audio_debug - DEBUG - [vscode|iTerm:False] Input device 3: Microsoft Teams Audio
+2025-10-04 16:07:35,908 - audio_debug - DEBUG - [vscode|iTerm:False] Selected input device: 1
+2025-10-04 16:13:19,897 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Initializing AudioRecorder
+2025-10-04 16:13:19,897 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Sample rate: 16000, Chunk size: 1024
+2025-10-04 16:13:19,898 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Creating PyAudio instance
+2025-10-04 16:13:20,051 - audio_debug - DEBUG - [iTerm.app|iTerm:True] PyAudio instance created
+2025-10-04 16:13:20,051 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Finding input device
+2025-10-04 16:13:20,051 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Starting input device search
+2025-10-04 16:13:20,051 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Found 4 audio devices
+2025-10-04 16:13:20,051 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Input device 0: Arshdeep’s iPhone Microphone
+2025-10-04 16:13:20,051 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Input device 1: MacBook Air Microphone
+2025-10-04 16:13:20,051 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Input device 3: Microsoft Teams Audio
+2025-10-04 16:13:20,051 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Selected input device: 1
+2025-10-04 16:13:42,524 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Initializing AudioRecorder
+2025-10-04 16:13:42,524 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Sample rate: 16000, Chunk size: 1024
+2025-10-04 16:13:42,524 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Creating PyAudio instance
+2025-10-04 16:13:42,676 - audio_debug - DEBUG - [iTerm.app|iTerm:True] PyAudio instance created
+2025-10-04 16:13:42,677 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Finding input device
+2025-10-04 16:13:42,677 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Starting input device search
+2025-10-04 16:13:42,677 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Found 4 audio devices
+2025-10-04 16:13:42,677 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Input device 0: Arshdeep’s iPhone Microphone
+2025-10-04 16:13:42,678 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Input device 1: MacBook Air Microphone
+2025-10-04 16:13:42,678 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Input device 3: Microsoft Teams Audio
+2025-10-04 16:13:42,678 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Selected input device: 1
+2025-10-04 16:15:30,723 - audio_debug - DEBUG - [Unknown|iTerm:False] Initializing AudioRecorder
+2025-10-04 16:15:30,723 - audio_debug - DEBUG - [Unknown|iTerm:False] Sample rate: 16000, Chunk size: 1024
+2025-10-04 16:15:30,723 - audio_debug - DEBUG - [Unknown|iTerm:False] Creating PyAudio instance
+2025-10-04 16:15:30,811 - audio_debug - DEBUG - [Unknown|iTerm:False] PyAudio instance created
+2025-10-04 16:15:30,811 - audio_debug - DEBUG - [Unknown|iTerm:False] Finding input device
+2025-10-04 16:15:30,811 - audio_debug - DEBUG - [Unknown|iTerm:False] Starting input device search
+2025-10-04 16:15:30,811 - audio_debug - DEBUG - [Unknown|iTerm:False] Found 4 audio devices
+2025-10-04 16:15:30,811 - audio_debug - DEBUG - [Unknown|iTerm:False] Input device 0: Arshdeep’s iPhone Microphone
+2025-10-04 16:15:30,811 - audio_debug - DEBUG - [Unknown|iTerm:False] Input device 1: MacBook Air Microphone
+2025-10-04 16:15:30,811 - audio_debug - DEBUG - [Unknown|iTerm:False] Input device 3: Microsoft Teams Audio
+2025-10-04 16:15:30,811 - audio_debug - DEBUG - [Unknown|iTerm:False] Selected input device: 1
+2025-10-04 16:19:35,943 - audio_debug - DEBUG - [vscode|iTerm:False] Initializing AudioRecorder
+2025-10-04 16:19:35,944 - audio_debug - DEBUG - [vscode|iTerm:False] Sample rate: 16000, Chunk size: 1024
+2025-10-04 16:19:35,944 - audio_debug - DEBUG - [vscode|iTerm:False] Creating PyAudio instance
+2025-10-04 16:19:36,047 - audio_debug - DEBUG - [vscode|iTerm:False] PyAudio instance created
+2025-10-04 16:19:36,047 - audio_debug - DEBUG - [vscode|iTerm:False] Finding input device
+2025-10-04 16:19:36,047 - audio_debug - DEBUG - [vscode|iTerm:False] Starting input device search
+2025-10-04 16:19:36,047 - audio_debug - DEBUG - [vscode|iTerm:False] Found 4 audio devices
+2025-10-04 16:19:36,047 - audio_debug - DEBUG - [vscode|iTerm:False] Input device 0: Arshdeep’s iPhone Microphone
+2025-10-04 16:19:36,047 - audio_debug - DEBUG - [vscode|iTerm:False] Input device 1: MacBook Air Microphone
+2025-10-04 16:19:36,047 - audio_debug - DEBUG - [vscode|iTerm:False] Input device 3: Microsoft Teams Audio
+2025-10-04 16:19:36,047 - audio_debug - DEBUG - [vscode|iTerm:False] Selected input device: 1
+2025-10-04 16:25:23,922 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Initializing AudioRecorder
+2025-10-04 16:25:23,922 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Sample rate: 16000, Chunk size: 1024
+2025-10-04 16:25:23,922 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Creating PyAudio instance
+2025-10-04 16:25:24,131 - audio_debug - DEBUG - [iTerm.app|iTerm:True] PyAudio instance created
+2025-10-04 16:25:24,131 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Finding input device
+2025-10-04 16:25:24,131 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Starting input device search
+2025-10-04 16:25:24,132 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Found 4 audio devices
+2025-10-04 16:25:24,132 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Input device 0: Arshdeep’s iPhone Microphone
+2025-10-04 16:25:24,132 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Input device 1: MacBook Air Microphone
+2025-10-04 16:25:24,132 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Input device 3: Microsoft Teams Audio
+2025-10-04 16:25:24,133 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Selected input device: 1
+2025-10-04 16:30:29,656 - audio_debug - DEBUG - [vscode|iTerm:False] Initializing AudioRecorder
+2025-10-04 16:30:29,657 - audio_debug - DEBUG - [vscode|iTerm:False] Sample rate: 16000, Chunk size: 1024
+2025-10-04 16:30:29,657 - audio_debug - DEBUG - [vscode|iTerm:False] Creating PyAudio instance
+2025-10-04 16:30:29,783 - audio_debug - DEBUG - [vscode|iTerm:False] PyAudio instance created
+2025-10-04 16:30:29,783 - audio_debug - DEBUG - [vscode|iTerm:False] Finding input device
+2025-10-04 16:30:29,783 - audio_debug - DEBUG - [vscode|iTerm:False] Starting input device search
+2025-10-04 16:30:29,783 - audio_debug - DEBUG - [vscode|iTerm:False] Found 4 audio devices
+2025-10-04 16:30:29,783 - audio_debug - DEBUG - [vscode|iTerm:False] Input device 0: Arshdeep’s iPhone Microphone
+2025-10-04 16:30:29,783 - audio_debug - DEBUG - [vscode|iTerm:False] Input device 1: MacBook Air Microphone
+2025-10-04 16:30:29,783 - audio_debug - DEBUG - [vscode|iTerm:False] Input device 3: Microsoft Teams Audio
+2025-10-04 16:30:29,783 - audio_debug - DEBUG - [vscode|iTerm:False] Selected input device: 1
+2025-10-04 16:33:49,595 - audio_debug - DEBUG - [vscode|iTerm:False] Initializing AudioRecorder
+2025-10-04 16:33:49,595 - audio_debug - DEBUG - [vscode|iTerm:False] Sample rate: 16000, Chunk size: 1024
+2025-10-04 16:33:49,595 - audio_debug - DEBUG - [vscode|iTerm:False] Creating PyAudio instance
+2025-10-04 16:33:49,739 - audio_debug - DEBUG - [vscode|iTerm:False] PyAudio instance created
+2025-10-04 16:33:49,739 - audio_debug - DEBUG - [vscode|iTerm:False] Finding input device
+2025-10-04 16:33:49,739 - audio_debug - DEBUG - [vscode|iTerm:False] Starting input device search
+2025-10-04 16:33:49,739 - audio_debug - DEBUG - [vscode|iTerm:False] Found 4 audio devices
+2025-10-04 16:33:49,739 - audio_debug - DEBUG - [vscode|iTerm:False] Input device 0: Arshdeep’s iPhone Microphone
+2025-10-04 16:33:49,739 - audio_debug - DEBUG - [vscode|iTerm:False] Input device 1: MacBook Air Microphone
+2025-10-04 16:33:49,739 - audio_debug - DEBUG - [vscode|iTerm:False] Input device 3: Microsoft Teams Audio
+2025-10-04 16:33:49,739 - audio_debug - DEBUG - [vscode|iTerm:False] Selected input device: 1
+2025-10-04 16:34:23,724 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Initializing AudioRecorder
+2025-10-04 16:34:23,724 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Sample rate: 16000, Chunk size: 1024
+2025-10-04 16:34:23,724 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Creating PyAudio instance
+2025-10-04 16:34:23,948 - audio_debug - DEBUG - [iTerm.app|iTerm:True] PyAudio instance created
+2025-10-04 16:34:23,948 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Finding input device
+2025-10-04 16:34:23,948 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Starting input device search
+2025-10-04 16:34:23,948 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Found 4 audio devices
+2025-10-04 16:34:23,949 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Input device 0: Arshdeep’s iPhone Microphone
+2025-10-04 16:34:23,949 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Input device 1: MacBook Air Microphone
+2025-10-04 16:34:23,949 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Input device 3: Microsoft Teams Audio
+2025-10-04 16:34:23,949 - audio_debug - DEBUG - [iTerm.app|iTerm:True] Selected input device: 1

@@ -236,7 +236,21 @@ class VoiceBotCLI:
             # Startup announcement
             startup_message = "Hey, We ready to rumble! Let us go"
             print(f"{Fore.MAGENTA}🔊 Startup: {startup_message}{Style.RESET_ALL}")
-            self.voice_bot.speak(startup_message)
+            
+            # Try system TTS first (most reliable)
+            try:
+                import subprocess
+                subprocess.run(["say", startup_message], check=True)
+                print(f"{Fore.GREEN}✅ Startup announcement played via system TTS{Style.RESET_ALL}")
+            except Exception as e:
+                debug_log(f"System TTS failed: {e}", "WARNING")
+                # Fallback to voice bot TTS
+                try:
+                    self.voice_bot.speak(startup_message)
+                    print(f"{Fore.GREEN}✅ Startup announcement played via voice bot TTS{Style.RESET_ALL}")
+                except Exception as e2:
+                    debug_log(f"Voice bot TTS also failed: {e2}", "ERROR")
+                    print(f"{Fore.RED}❌ Startup announcement failed completely{Style.RESET_ALL}")
             
             # Clear the logging line
             if hasattr(self, 'log_handler'):
