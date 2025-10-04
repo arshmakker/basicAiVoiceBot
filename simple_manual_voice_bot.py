@@ -9,6 +9,7 @@ import os
 import time
 import signal
 import threading
+import os
 from pathlib import Path
 from colorama import Fore, Style, init
 
@@ -37,7 +38,7 @@ class SimpleManualVoiceBot:
         
         print(f"{Fore.CYAN}🤖 Simple Manual Voice Bot Initialized{Style.RESET_ALL}")
         print(f"Terminal: {self.terminal} (iTerm: {self.is_iterm})")
-        print(f"{Fore.YELLOW}💡 Controls: 's' = start, 't' = stop, 'q' = quit, 'h' = help{Style.RESET_ALL}")
+        print(f"{Fore.YELLOW}💡 Controls: 's' + Enter = start, 't' + Enter = stop, 'q' + Enter = quit, 'h' + Enter = help{Style.RESET_ALL}")
     
     def _signal_handler(self, signum, frame):
         """Handle shutdown signals"""
@@ -75,7 +76,7 @@ class SimpleManualVoiceBot:
         self.is_running = True
         
         # Startup announcement
-        startup_message = "Hey, We ready to rumble! Simple manual recording activated. Press 's' to start recording."
+        startup_message = "Hey, We ready to rumble! Simple manual recording activated. Type 's' and press Enter to start recording."
         print(f"{Fore.MAGENTA}🔊 Startup: {startup_message}{Style.RESET_ALL}")
         self.speak(startup_message)
         
@@ -92,11 +93,11 @@ class SimpleManualVoiceBot:
             self.recording_thread.start()
             
             print(f"{Fore.GREEN}🎤 Simple manual audio recording ready{Style.RESET_ALL}")
-            print(f"{Fore.WHITE}💡 Press 's' to start recording{Style.RESET_ALL}")
-            print(f"{Fore.WHITE}💡 Press 't' to stop recording{Style.RESET_ALL}")
-            print(f"{Fore.WHITE}💡 Press 'q' to quit{Style.RESET_ALL}")
-            print(f"{Fore.WHITE}💡 Press 'h' for help{Style.RESET_ALL}")
-            print(f"{Fore.WHITE}💡 Current status: 💤 Waiting for 's' command...{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}💡 Type 's' + Enter to start recording{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}💡 Type 't' + Enter to stop recording{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}💡 Type 'q' + Enter to quit{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}💡 Type 'h' + Enter for help{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}💡 Current status: 💤 Waiting for 's' + Enter...{Style.RESET_ALL}")
             
         except Exception as e:
             print(f"\n{Fore.RED}❌ Audio setup failed: {e}{Style.RESET_ALL}")
@@ -154,7 +155,7 @@ class SimpleManualVoiceBot:
         self.recording_data = []
         
         print(f"\n{Fore.GREEN}🔴 RECORDING STARTED{Style.RESET_ALL}")
-        print(f"{Fore.WHITE}💡 Press 't' to stop recording{Style.RESET_ALL}")
+        print(f"{Fore.WHITE}💡 Type 't' + Enter to stop recording{Style.RESET_ALL}")
         
         # Announce recording start
         self.speak("Recording started")
@@ -169,8 +170,16 @@ class SimpleManualVoiceBot:
         
         print(f"\n{Fore.YELLOW}⏹️  RECORDING STOPPED{Style.RESET_ALL}")
         
-        # Calculate recording duration
-        recording_duration = len(self.recording_data) * (1024 / 16000)  # seconds
+        # Calculate actual recording duration from audio data
+        if self.recording_data:
+            total_bytes = len(b''.join(self.recording_data))
+            # 16-bit samples = 2 bytes per sample, 16000 samples per second
+            recording_duration = total_bytes / (2 * 16000)
+            # Debug info removed for cleaner interface
+            # print(f"{Fore.CYAN}🔍 Debug: {len(self.recording_data)} chunks, {total_bytes} bytes, {recording_duration:.2f}s{Style.RESET_ALL}")
+        else:
+            recording_duration = 0
+            print(f"{Fore.YELLOW}⚠️  No recording data captured{Style.RESET_ALL}")
         
         print(f"{Fore.CYAN}📊 Recording stats:{Style.RESET_ALL}")
         print(f"  • Duration: {recording_duration:.1f} seconds")
@@ -184,7 +193,7 @@ class SimpleManualVoiceBot:
         self.recording_data = []
         
         print(f"{Fore.GREEN}✅ Recording processing completed{Style.RESET_ALL}")
-        print(f"{Fore.WHITE}💡 Press 's' to begin new recording{Style.RESET_ALL}")
+        print(f"{Fore.WHITE}💡 Type 's' + Enter to begin new recording{Style.RESET_ALL}")
         
         # Announce recording stop
         self.speak("Recording stopped")
@@ -192,42 +201,222 @@ class SimpleManualVoiceBot:
     def _process_recording_and_respond(self, duration):
         """Process the recording and generate a response"""
         try:
-            print(f"\n{Fore.CYAN}🔄 Processing recording and generating response...{Style.RESET_ALL}")
+            print(f"\n{Fore.CYAN}🔄 Processing recording...{Style.RESET_ALL}")
             
-            # Simulate processing time
-            time.sleep(1)
-            
-            # Generate response based on recording duration
+            # Generate quick confirmation message based on recording duration
             if duration < 1.0:
-                response = "I heard a very short recording. Please speak a bit longer next time."
-                print(f"{Fore.YELLOW}⚠️  Short recording detected ({duration:.1f}s){Style.RESET_ALL}")
+                confirmation = "Short recording. Please speak longer next time."
+                print(f"{Fore.YELLOW}⚠️  Short recording ({duration:.1f}s){Style.RESET_ALL}")
             elif duration < 3.0:
-                response = "I heard your message. That was a nice short recording!"
-                print(f"{Fore.GREEN}✅ Short recording processed ({duration:.1f}s){Style.RESET_ALL}")
+                confirmation = "I heard your short message. Repeating back."
+                print(f"{Fore.GREEN}✅ Short recording ({duration:.1f}s){Style.RESET_ALL}")
             elif duration < 10.0:
-                response = "I heard your longer message. Thank you for the detailed input!"
-                print(f"{Fore.GREEN}✅ Medium recording processed ({duration:.1f}s){Style.RESET_ALL}")
+                confirmation = "I heard your message. Repeating back."
+                print(f"{Fore.GREEN}✅ Medium recording ({duration:.1f}s){Style.RESET_ALL}")
             else:
-                response = "I heard your very long message. That was quite detailed!"
-                print(f"{Fore.GREEN}✅ Long recording processed ({duration:.1f}s){Style.RESET_ALL}")
+                confirmation = "I heard your long message. Repeating back."
+                print(f"{Fore.GREEN}✅ Long recording ({duration:.1f}s){Style.RESET_ALL}")
             
-            # Display the response
-            print(f"\n{Fore.MAGENTA}🤖 Bot Response:{Style.RESET_ALL}")
-            print(f"{Fore.WHITE}{response}{Style.RESET_ALL}")
+            # Display and speak confirmation quickly
+            print(f"\n{Fore.MAGENTA}🤖 Bot:{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}{confirmation}{Style.RESET_ALL}")
+            self.speak(confirmation)
             
-            # Speak the response
-            print(f"\n{Fore.WHITE}🔊 Speaking response...{Style.RESET_ALL}")
-            self.speak(response)
+            # Quick repeat back
+            self._repeat_recording(duration)
             
-            # Add some additional feedback
-            print(f"\n{Fore.GREEN}✅ Response processing completed{Style.RESET_ALL}")
+            print(f"\n{Fore.GREEN}✅ Confirmation completed{Style.RESET_ALL}")
             
         except Exception as e:
-            print(f"\n{Fore.RED}❌ Error processing recording: {e}{Style.RESET_ALL}")
-            # Fallback response
-            fallback_response = "I heard your recording but had trouble processing it. Please try again."
-            print(f"{Fore.WHITE}🤖 Fallback Response: {fallback_response}{Style.RESET_ALL}")
+            print(f"\n{Fore.RED}❌ Error: {e}{Style.RESET_ALL}")
+            fallback_response = "Recording error. Please try again."
+            print(f"{Fore.WHITE}🤖 {fallback_response}{Style.RESET_ALL}")
             self.speak(fallback_response)
+    
+    def _repeat_recording(self, duration):
+        """Play back the actual recorded audio and show transcript"""
+        try:
+            if not self.recording_data:
+                print(f"{Fore.YELLOW}⚠️  No recording data to play back{Style.RESET_ALL}")
+                self.speak("No recording to play back.")
+                return
+            
+            print(f"{Fore.WHITE}📢 Playing back your recording...{Style.RESET_ALL}")
+            self.speak("Playing back your recording.")
+            
+            # Play back the actual recorded audio and get transcript
+            transcript = self._play_recorded_audio()
+            
+            # Display the transcript
+            if transcript and transcript != "No speech detected":
+                print(f"\n{Fore.MAGENTA}📝 Transcript:{Style.RESET_ALL}")
+                print(f"{Fore.WHITE}'{transcript}'{Style.RESET_ALL}")
+                
+                # Speak the transcript back
+                print(f"\n{Fore.WHITE}🔊 Speaking transcript...{Style.RESET_ALL}")
+                self.speak(f"I heard you say: {transcript}")
+            else:
+                print(f"\n{Fore.YELLOW}⚠️  No transcript available{Style.RESET_ALL}")
+                self.speak("I couldn't understand what you said.")
+            
+            # Ask for confirmation
+            confirmation_question = "Is that correct?"
+            print(f"\n{Fore.YELLOW}❓ {confirmation_question}{Style.RESET_ALL}")
+            self.speak(confirmation_question)
+            
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Playback error: {e}{Style.RESET_ALL}")
+            self.speak("Playback error.")
+    
+    def _process_audio_for_transcription(self):
+        """Process the recorded audio data for transcription only"""
+        try:
+            if not self.recording_data:
+                return None
+            
+            # Combine all recorded chunks
+            audio_data = b''.join(self.recording_data)
+            
+            if not audio_data:
+                print(f"{Fore.YELLOW}⚠️  Empty recording data{Style.RESET_ALL}")
+                return None
+            
+            # Create a temporary audio file for transcription
+            import tempfile
+            import wave
+            
+            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_file:
+                # Write WAV file
+                with wave.open(temp_file.name, 'wb') as wav_file:
+                    wav_file.setnchannels(1)  # Mono
+                    wav_file.setsampwidth(2)  # 16-bit
+                    wav_file.setframerate(16000)  # 16kHz
+                    wav_file.writeframes(audio_data)
+                
+                # Get transcript of the recording
+                transcript = self._transcribe_audio(temp_file.name)
+                
+                # Clean up temp file
+                import os
+                os.unlink(temp_file.name)
+                
+                return transcript
+                
+        except Exception as e:
+            print(f"\n{Fore.RED}❌ Audio processing failed: {e}{Style.RESET_ALL}")
+            self.speak("Audio processing failed.")
+            return None
+    
+    def _transcribe_audio(self, audio_file_path):
+        """Transcribe the audio file using Vosk with multi-language support"""
+        try:
+            print(f"{Fore.CYAN}🔄 Transcribing audio...{Style.RESET_ALL}")
+            
+            # Try to load Vosk model
+            try:
+                import vosk
+                import json
+                import sys
+                import os
+                from io import StringIO
+                
+                # Suppress Vosk logging output
+                old_stderr = sys.stderr
+                sys.stderr = StringIO()
+                
+                # Try both English and Hindi models
+                en_model_path = "models/vosk-model-en-us-0.22"
+                hi_model_path = "models/vosk-model-hi-0.22"
+                
+                transcripts = {}
+                
+                # Try English model first
+                if os.path.exists(en_model_path):
+                    try:
+                        print(f"{Fore.CYAN}📝 Trying English model...{Style.RESET_ALL}")
+                        model = vosk.Model(en_model_path)
+                        recognizer = vosk.KaldiRecognizer(model, 16000)
+                        
+                        with open(audio_file_path, 'rb') as audio_file:
+                            audio_data = audio_file.read()
+                            
+                        if recognizer.AcceptWaveform(audio_data):
+                            result = json.loads(recognizer.Result())
+                            en_transcript = result.get('text', '').strip()
+                        else:
+                            result = json.loads(recognizer.PartialResult())
+                            en_transcript = result.get('partial', '').strip()
+                        
+                        if en_transcript:
+                            transcripts['English'] = en_transcript
+                            print(f"{Fore.GREEN}✅ English transcription: '{en_transcript}'{Style.RESET_ALL}")
+                        else:
+                            print(f"{Fore.YELLOW}⚠️  No English speech detected{Style.RESET_ALL}")
+                            
+                    except Exception as e:
+                        print(f"{Fore.YELLOW}⚠️  English model failed: {e}{Style.RESET_ALL}")
+                
+                # Try Hindi model
+                if os.path.exists(hi_model_path):
+                    try:
+                        print(f"{Fore.CYAN}📝 Trying Hindi model...{Style.RESET_ALL}")
+                        model = vosk.Model(hi_model_path)
+                        recognizer = vosk.KaldiRecognizer(model, 16000)
+                        
+                        with open(audio_file_path, 'rb') as audio_file:
+                            audio_data = audio_file.read()
+                            
+                        if recognizer.AcceptWaveform(audio_data):
+                            result = json.loads(recognizer.Result())
+                            hi_transcript = result.get('text', '').strip()
+                        else:
+                            result = json.loads(recognizer.PartialResult())
+                            hi_transcript = result.get('partial', '').strip()
+                        
+                        if hi_transcript:
+                            transcripts['Hindi'] = hi_transcript
+                            print(f"{Fore.GREEN}✅ Hindi transcription: '{hi_transcript}'{Style.RESET_ALL}")
+                        else:
+                            print(f"{Fore.YELLOW}⚠️  No Hindi speech detected{Style.RESET_ALL}")
+                            
+                    except Exception as e:
+                        print(f"{Fore.YELLOW}⚠️  Hindi model failed: {e}{Style.RESET_ALL}")
+                
+                # Restore stderr
+                sys.stderr = old_stderr
+                
+                # Choose the best result
+                if len(transcripts) == 1:
+                    # Only one model worked
+                    language, transcript = list(transcripts.items())[0]
+                    print(f"{Fore.GREEN}✅ Using {language} transcription{Style.RESET_ALL}")
+                    return transcript
+                elif len(transcripts) == 2:
+                    # Both models worked, choose the longer/more confident one
+                    en_text = transcripts.get('English', '')
+                    hi_text = transcripts.get('Hindi', '')
+                    
+                    # Simple heuristic: choose the longer transcription
+                    if len(hi_text) > len(en_text):
+                        print(f"{Fore.GREEN}✅ Using Hindi transcription (longer){Style.RESET_ALL}")
+                        return hi_text
+                    else:
+                        print(f"{Fore.GREEN}✅ Using English transcription (longer){Style.RESET_ALL}")
+                        return en_text
+                else:
+                    print(f"{Fore.YELLOW}⚠️  No speech detected in recording{Style.RESET_ALL}")
+                    return "No speech detected"
+                    
+            except ImportError:
+                print(f"{Fore.YELLOW}⚠️  Vosk not available, cannot transcribe{Style.RESET_ALL}")
+                return "Transcription unavailable - Vosk not installed"
+            except Exception as e:
+                print(f"{Fore.RED}❌ Transcription error: {e}{Style.RESET_ALL}")
+                return f"Transcription error: {str(e)}"
+                
+        except Exception as e:
+            print(f"{Fore.RED}❌ Transcription failed: {e}{Style.RESET_ALL}")
+            return "Transcription failed"
     
     def stop(self):
         """Stop the simple manual voice bot"""
@@ -268,17 +457,18 @@ class SimpleManualVoiceBot:
                         status = "🔴 RECORDING" if self.is_recording else "💤 IDLE"
                         print(f"{Fore.WHITE}Status: {status}{Style.RESET_ALL}")
                     elif command in ['h', 'help']:
-                        print(f"{Fore.CYAN}Commands:{Style.RESET_ALL}")
+                        print(f"{Fore.CYAN}Commands (type + Enter):{Style.RESET_ALL}")
                         print(f"  {Fore.WHITE}s / start{Style.RESET_ALL} - Begin recording")
                         print(f"  {Fore.WHITE}t / stop{Style.RESET_ALL}  - Stop recording")
                         print(f"  {Fore.WHITE}status{Style.RESET_ALL}    - Show current status")
                         print(f"  {Fore.WHITE}q / quit{Style.RESET_ALL}  - Exit the bot")
                         print(f"  {Fore.WHITE}h / help{Style.RESET_ALL}  - Show this help")
+                        print(f"\n{Fore.YELLOW}💡 Remember: Type the command and press Enter!{Style.RESET_ALL}")
                     elif command == '':
                         continue
                     else:
                         print(f"{Fore.YELLOW}Unknown command: {command}{Style.RESET_ALL}")
-                        print(f"{Fore.WHITE}Press 'h' for help{Style.RESET_ALL}")
+                        print(f"{Fore.WHITE}Type 'h' + Enter for help{Style.RESET_ALL}")
                         
                 except EOFError:
                     # Handle Ctrl+D

@@ -23,23 +23,24 @@ debug_handler.setFormatter(debug_formatter)
 DEBUG_LOG.addHandler(debug_handler)
 
 def debug_log(message: str, level: str = "INFO"):
-    """Enhanced debug logging with terminal info"""
+    """Enhanced debug logging with terminal info - silent console output"""
     terminal = os.environ.get('TERM_PROGRAM', 'Unknown')
     is_iterm = 'iTerm' in terminal
     full_message = f"[{terminal}|iTerm:{is_iterm}] {message}"
     
+    # Only log to file, don't print to console for cleaner interface
     if level == "DEBUG":
         DEBUG_LOG.debug(full_message)
-        print(f"🔊 AUDIO DEBUG: {full_message}")
+        # Removed console output: print(f"🔊 AUDIO DEBUG: {full_message}")
     elif level == "WARNING":
         DEBUG_LOG.warning(full_message)
-        print(f"🔊 AUDIO WARN: {full_message}")
+        # Removed console output: print(f"🔊 AUDIO WARN: {full_message}")
     elif level == "ERROR":
         DEBUG_LOG.error(full_message)
-        print(f"🔊 AUDIO ERROR: {full_message}")
+        # Removed console output: print(f"🔊 AUDIO ERROR: {full_message}")
     else:
         DEBUG_LOG.info(full_message)
-        print(f"🔊 AUDIO INFO: {full_message}")
+        # Removed console output: print(f"🔊 AUDIO INFO: {full_message}")
 
 
 class AudioRecorder:
@@ -440,3 +441,134 @@ class AudioPlayer:
         self.stop_playing()
         if hasattr(self, 'audio'):
             self.audio.terminate()
+
+
+class AudioTranscriber:
+    """Audio transcription using Vosk models"""
+    
+    def __init__(self, models_dir: str = "models"):
+        """
+        Initialize transcriber
+        
+        Args:
+            models_dir: Directory containing Vosk models
+        """
+        self.models_dir = models_dir
+        self.en_model_path = os.path.join(models_dir, "vosk-model-en-us-0.22")
+        self.hi_model_path = os.path.join(models_dir, "vosk-model-hi-0.22")
+        
+    def transcribe_audio(self, audio_data: bytes, sample_rate: int = 16000) -> str:
+        """
+        Transcribe audio data using both English and Hindi models
+        
+        Args:
+            audio_data: Raw audio data
+            sample_rate: Audio sample rate
+            
+        Returns:
+            Transcribed text
+        """
+        try:
+            import vosk
+            import json
+            import sys
+            from io import StringIO
+            
+            # Suppress Vosk logging output
+            old_stderr = sys.stderr
+            sys.stderr = StringIO()
+            
+            transcripts = {}
+            
+            try:
+                # Try English model first
+                if os.path.exists(self.en_model_path):
+                    try:
+                        debug_log("Trying English model for transcription", "DEBUG")
+                        model = vosk.Model(self.en_model_path)
+                        recognizer = vosk.KaldiRecognizer(model, sample_rate)
+                        
+                        if recognizer.AcceptWaveform(audio_data):
+                            result = json.loads(recognizer.Result())
+                            en_transcript = result.get('text', '').strip()
+                        else:
+                            result = json.loads(recognizer.PartialResult())
+                            en_transcript = result.get('partial', '').strip()
+                        
+                        if en_transcript:
+                            transcripts['English'] = en_transcript
+                            debug_log(f"English transcription: '{en_transcript}'", "DEBUG")
+                            
+                    except Exception as e:
+                        debug_log(f"English model failed: {e}", "WARNING")
+                
+                # Try Hindi model
+                if os.path.exists(self.hi_model_path):
+                    try:
+                        debug_log("Trying Hindi model for transcription", "DEBUG")
+                        model = vosk.Model(self.hi_model_path)
+                        recognizer = vosk.KaldiRecognizer(model, sample_rate)
+                        
+                        if recognizer.AcceptWaveform(audio_data):
+                            result = json.loads(recognizer.Result())
+                            hi_transcript = result.get('text', '').strip()
+                        else:
+                            result = json.loads(recognizer.PartialResult())
+                            hi_transcript = result.get('partial', '').strip()
+                        
+                        if hi_transcript:
+                            transcripts['Hindi'] = hi_transcript
+                            debug_log(f"Hindi transcription: '{hi_transcript}'", "DEBUG")
+                            
+                    except Exception as e:
+                        debug_log(f"Hindi model failed: {e}", "WARNING")
+                
+            finally:
+                # Restore stderr
+                sys.stderr = old_stderr
+            
+            # Choose the best result
+            if len(transcripts) == 1:
+                language, transcript = list(transcripts.items())[0]
+                debug_log(f"Using {language} transcription", "DEBUG")
+                return transcript
+            elif len(transcripts) == 2:
+                # Both models worked, choose the longer/more confident one
+                en_text = transcripts.get('English', '')
+                hi_text = transcripts.get('Hindi', '')
+                
+                if len(hi_text) > len(en_text):
+                    debug_log("Using Hindi transcription (longer)", "DEBUG")
+                    return hi_text
+                else:
+                    debug_log("Using English transcription (longer)", "DEBUG")
+                    return en_text
+            else:
+                debug_log("No speech detected in recording", "WARNING")
+                return "No speech detected"
+                
+        except ImportError:
+            debug_log("Vosk not available, cannot transcribe", "WARNING")
+            return "Transcription unavailable - Vosk not installed"
+        except Exception as e:
+            debug_log(f"Transcription error: {e}", "ERROR")
+            return f"Transcription error: {str(e)}"
+    
+    def transcribe_audio_file(self, audio_file_path: str, sample_rate: int = 16000) -> str:
+        """
+        Transcribe audio from file
+        
+        Args:
+            audio_file_path: Path to audio file
+            sample_rate: Audio sample rate
+            
+        Returns:
+            Transcribed text
+        """
+        try:
+            with open(audio_file_path, 'rb') as audio_file:
+                audio_data = audio_file.read()
+            return self.transcribe_audio(audio_data, sample_rate)
+        except Exception as e:
+            debug_log(f"Failed to read audio file: {e}", "ERROR")
+            return f"Failed to read audio file: {str(e)}"
