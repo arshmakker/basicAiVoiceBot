@@ -362,6 +362,137 @@ class VoiceBotCLI:
             debug_log("Stopping voice ticker", "DEBUG")
             voice_ticker.stop()
             debug_log("Voice ticker stopped", "DEBUG")
+
+    def run_manual_mode(self):
+        """Run manual recording mode with transcription"""
+        debug_log("Starting manual mode", "DEBUG")
+        print(f"\n{Fore.CYAN}🎤 Manual Mode - Press 's' + Enter to record, 't' + Enter to stop{Style.RESET_ALL}")
+        print(f"{Fore.YELLOW}💡 Controls: 's' + Enter = start, 't' + Enter = stop, 'q' + Enter = quit, 'h' + Enter = help{Style.RESET_ALL}")
+        
+        try:
+            from voice_bot.audio_utils import AudioRecorder, AudioTranscriber
+            
+            # Initialize audio recorder and transcriber
+            recorder = AudioRecorder()
+            transcriber = AudioTranscriber(models_dir=getattr(self, 'models_dir', 'models'))
+            
+            is_recording = False
+            recording_data = []
+            
+            print(f"{Fore.GREEN}🎤 Manual recording ready{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}💡 Type 's' + Enter to start recording{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}💡 Type 't' + Enter to stop recording{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}💡 Type 'q' + Enter to quit{Style.RESET_ALL}")
+            print(f"{Fore.WHITE}💡 Type 'h' + Enter for help{Style.RESET_ALL}")
+            
+            while self.running:
+                try:
+                    command = input(f"\n{Fore.CYAN}Voice Bot> {Style.RESET_ALL}").strip().lower()
+                    
+                    if command in ['s', 'start']:
+                        if not is_recording:
+                            is_recording = True
+                            recording_data = []
+                            print(f"\n{Fore.GREEN}🔴 RECORDING STARTED{Style.RESET_ALL}")
+                            print(f"{Fore.WHITE}💡 Type 't' + Enter to stop recording{Style.RESET_ALL}")
+                            
+                            # Start recording
+                            recorder.start_recording()
+                            while is_recording:
+                                try:
+                                    data = recorder.stream.read(recorder.chunk_size, exception_on_overflow=False)
+                                    recording_data.append(data)
+                                except:
+                                    break
+                        else:
+                            print(f"{Fore.YELLOW}⚠️  Already recording{Style.RESET_ALL}")
+                            
+                    elif command in ['t', 'stop']:
+                        if is_recording:
+                            is_recording = False
+                            recorder.stop_recording()
+                            
+                            print(f"\n{Fore.YELLOW}⏹️  RECORDING STOPPED{Style.RESET_ALL}")
+                            
+                            # Calculate duration
+                            if recording_data:
+                                total_bytes = len(b''.join(recording_data))
+                                duration = total_bytes / (2 * 16000)  # 16-bit, 16kHz
+                                print(f"{Fore.CYAN}📊 Recording stats:{Style.RESET_ALL}")
+                                print(f"  • Duration: {duration:.1f} seconds")
+                                print(f"  • Audio chunks: {len(recording_data)}")
+                                print(f"  • Total size: {total_bytes} bytes")
+                                
+                                # Transcribe audio
+                                print(f"{Fore.CYAN}🔄 Processing recording for transcription...{Style.RESET_ALL}")
+                                audio_data = b''.join(recording_data)
+                                transcript = transcriber.transcribe_audio(audio_data)
+                                
+                                if transcript and transcript != "No speech detected":
+                                    print(f"\n{Fore.MAGENTA}📝 Transcript:{Style.RESET_ALL}")
+                                    print(f"{Fore.WHITE}'{transcript}'{Style.RESET_ALL}")
+                                    
+                                    # Speak the transcript back
+                                    print(f"\n{Fore.WHITE}🔊 Speaking transcript...{Style.RESET_ALL}")
+                                    if self.voice_bot:
+                                        self.voice_bot.speak(f"I heard you say: {transcript}")
+                                    else:
+                                        # Fallback to system TTS
+                                        import subprocess
+                                        subprocess.run(["say", f"I heard you say: {transcript}"], check=True)
+                                else:
+                                    print(f"{Fore.YELLOW}⚠️  No speech detected{Style.RESET_ALL}")
+                                    if self.voice_bot:
+                                        self.voice_bot.speak("I couldn't understand what you said.")
+                                    else:
+                                        import subprocess
+                                        subprocess.run(["say", "I couldn't understand what you said."], check=True)
+                                
+                                print(f"\n{Fore.GREEN}✅ Transcription completed{Style.RESET_ALL}")
+                                print(f"{Fore.WHITE}💡 Type 's' + Enter to start new recording{Style.RESET_ALL}")
+                                
+                                # Clear recording data
+                                recording_data = []
+                        else:
+                            print(f"{Fore.YELLOW}⚠️  Not currently recording{Style.RESET_ALL}")
+                            
+                    elif command in ['q', 'quit', 'exit']:
+                        print(f"{Fore.YELLOW}👋 Exiting manual mode...{Style.RESET_ALL}")
+                        break
+                        
+                    elif command in ['h', 'help']:
+                        print(f"{Fore.CYAN}Commands (type + Enter):{Style.RESET_ALL}")
+                        print(f"  {Fore.WHITE}s / start{Style.RESET_ALL} - Begin recording")
+                        print(f"  {Fore.WHITE}t / stop{Style.RESET_ALL}  - Stop recording")
+                        print(f"  {Fore.WHITE}q / quit{Style.RESET_ALL}  - Exit the bot")
+                        print(f"  {Fore.WHITE}h / help{Style.RESET_ALL}  - Show this help")
+                        print(f"\n{Fore.YELLOW}💡 Remember: Type the command and press Enter!{Style.RESET_ALL}")
+                        
+                    elif command == '':
+                        continue
+                    else:
+                        print(f"{Fore.YELLOW}Unknown command: {command}{Style.RESET_ALL}")
+                        print(f"{Fore.WHITE}Type 'h' + Enter for help{Style.RESET_ALL}")
+                        
+                except EOFError:
+                    print(f"\n{Fore.YELLOW}👋 Exiting manual mode...{Style.RESET_ALL}")
+                    break
+                except KeyboardInterrupt:
+                    print(f"\n{Fore.YELLOW}👋 Manual mode stopped by user{Style.RESET_ALL}")
+                    break
+                    
+        except Exception as e:
+            debug_log(f"Manual mode error: {e}", "ERROR")
+            print(f"{Fore.RED}❌ Manual mode error: {e}{Style.RESET_ALL}")
+            import traceback
+            traceback.print_exc()
+        finally:
+            # Cleanup
+            try:
+                if 'recorder' in locals():
+                    recorder.stop_recording()
+            except:
+                pass
     
     def _on_speech_detected(self, text: str):
         """Callback for detected speech"""
@@ -431,8 +562,8 @@ Examples:
     
     # Runtime configuration
     parser.add_argument('--mode', default='voice',
-                       choices=['voice', 'interactive'],
-                       help='Run mode: voice-only or interactive (default: voice)')
+                       choices=['voice', 'interactive', 'manual'],
+                       help='Run mode: voice-only, interactive, or manual (default: voice)')
     parser.add_argument('--verbose', '-v', action='store_true',
                        help='Enable verbose logging')
     
@@ -456,6 +587,9 @@ Examples:
         if args.mode == 'interactive':
             # For interactive mode, don't start the voice bot, just run interactive commands
             cli.run_interactive_mode()
+        elif args.mode == 'manual':
+            # For manual mode, use transcription without full voice bot
+            cli.run_manual_mode()
         else:
             # For voice mode, start the voice bot first
             if not cli.start():

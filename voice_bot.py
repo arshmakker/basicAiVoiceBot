@@ -63,16 +63,38 @@ def run_smart_mode():
         traceback.print_exc()
 
 def run_manual_mode():
-    """Run manual voice bot mode"""
+    """Run manual voice bot mode with integrated transcription"""
     print(f"\n{Fore.CYAN}🎮 Starting Manual Voice Bot Mode{Style.RESET_ALL}")
     print(f"{Fore.CYAN}=================================={Style.RESET_ALL}")
     
     try:
-        from simple_manual_voice_bot import SimpleManualVoiceBot
+        from voice_bot_cli import VoiceBotCLI
         
-        bot = SimpleManualVoiceBot()
-        bot.run_interactive()
+        cli = VoiceBotCLI()
         
+        # Create mock args for manual mode
+        class MockArgs:
+            models_dir = "models"
+            vosk_en_model = "vosk-model-en-us-0.22"
+            vosk_hi_model = "vosk-model-hi-0.22"
+            tts_language = "en"
+            use_gpu = False
+            sample_rate = 16000
+            chunk_size = 1024
+            verbose = True
+        
+        args = MockArgs()
+        
+        # Initialize bot (lightweight for manual mode)
+        print(f"{Fore.YELLOW}⏳ Initializing manual mode...{Style.RESET_ALL}")
+        success = cli.initialize_bot(args)
+        
+        if success:
+            print(f"{Fore.GREEN}✅ Manual mode initialized{Style.RESET_ALL}")
+            cli.run_manual_mode()
+        else:
+            print(f"{Fore.RED}❌ Manual mode initialization failed{Style.RESET_ALL}")
+            
     except Exception as e:
         print(f"{Fore.RED}❌ Manual mode failed: {e}{Style.RESET_ALL}")
         import traceback
