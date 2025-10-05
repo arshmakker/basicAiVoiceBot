@@ -1,0 +1,9 @@
+2025-10-04 17:12:36,282 - voice_bot_debug - DEBUG - [iTerm.app|iTerm:True] Initializing VoiceBotCLI
+2025-10-04 17:12:36,282 - voice_bot_debug - DEBUG - [iTerm.app|iTerm:True] Setting up signal handlers
+2025-10-04 17:12:36,282 - voice_bot_debug - DEBUG - [iTerm.app|iTerm:True] Signal handlers configured
+2025-10-04 17:12:36,282 - voice_bot_debug - DEBUG - [iTerm.app|iTerm:True] Initializing voice bot with arguments
+2025-10-04 17:12:36,282 - voice_bot_debug - DEBUG - [iTerm.app|iTerm:True] Models dir: models
+2025-10-04 17:12:36,282 - voice_bot_debug - DEBUG - [iTerm.app|iTerm:True] Vosk EN model: vosk-model-en-us-0.22
+2025-10-04 17:12:36,282 - voice_bot_debug - DEBUG - [iTerm.app|iTerm:True] Vosk HI model: vosk-model-hi-0.22
+2025-10-04 17:12:36,282 - voice_bot_debug - DEBUG - [iTerm.app|iTerm:True] TTS language: en
+2025-10-04 17:12:36,282 - voice_bot_debug - DEBUG - [iTerm.app|iTerm:True] Checking models directory: models

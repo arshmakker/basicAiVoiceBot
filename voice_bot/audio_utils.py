@@ -457,9 +457,41 @@ class AudioTranscriber:
         self.en_model_path = os.path.join(models_dir, "vosk-model-en-us-0.22")
         self.hi_model_path = os.path.join(models_dir, "vosk-model-hi-0.22")
         
+        # Initialize models once to avoid reloading
+        self.en_model = None
+        self.hi_model = None
+        self._models_loaded = False
+        
+    def _load_models_safely(self):
+        """Load Vosk models safely with error handling"""
+        if self._models_loaded:
+            return True
+            
+        try:
+            import vosk
+            
+            # Try to load English model
+            if os.path.exists(self.en_model_path):
+                debug_log("Loading English Vosk model", "DEBUG")
+                self.en_model = vosk.Model(self.en_model_path)
+                debug_log("English model loaded successfully", "DEBUG")
+            
+            # Try to load Hindi model
+            if os.path.exists(self.hi_model_path):
+                debug_log("Loading Hindi Vosk model", "DEBUG")
+                self.hi_model = vosk.Model(self.hi_model_path)
+                debug_log("Hindi model loaded successfully", "DEBUG")
+            
+            self._models_loaded = True
+            return True
+            
+        except Exception as e:
+            debug_log(f"Failed to load Vosk models: {e}", "ERROR")
+            return False
+    
     def transcribe_audio(self, audio_data: bytes, sample_rate: int = 16000) -> str:
         """
-        Transcribe audio data using both English and Hindi models
+        Transcribe audio data using pre-loaded models
         
         Args:
             audio_data: Raw audio data
@@ -469,6 +501,10 @@ class AudioTranscriber:
             Transcribed text
         """
         try:
+            # Load models if not already loaded
+            if not self._load_models_safely():
+                return "Transcription unavailable - models not loaded"
+            
             import vosk
             import json
             import sys
@@ -481,12 +517,11 @@ class AudioTranscriber:
             transcripts = {}
             
             try:
-                # Try English model first
-                if os.path.exists(self.en_model_path):
+                # Try English model if available
+                if self.en_model:
                     try:
                         debug_log("Trying English model for transcription", "DEBUG")
-                        model = vosk.Model(self.en_model_path)
-                        recognizer = vosk.KaldiRecognizer(model, sample_rate)
+                        recognizer = vosk.KaldiRecognizer(self.en_model, sample_rate)
                         
                         if recognizer.AcceptWaveform(audio_data):
                             result = json.loads(recognizer.Result())
@@ -502,12 +537,11 @@ class AudioTranscriber:
                     except Exception as e:
                         debug_log(f"English model failed: {e}", "WARNING")
                 
-                # Try Hindi model
-                if os.path.exists(self.hi_model_path):
+                # Try Hindi model if available
+                if self.hi_model:
                     try:
                         debug_log("Trying Hindi model for transcription", "DEBUG")
-                        model = vosk.Model(self.hi_model_path)
-                        recognizer = vosk.KaldiRecognizer(model, sample_rate)
+                        recognizer = vosk.KaldiRecognizer(self.hi_model, sample_rate)
                         
                         if recognizer.AcceptWaveform(audio_data):
                             result = json.loads(recognizer.Result())
@@ -572,3 +606,21 @@ class AudioTranscriber:
         except Exception as e:
             debug_log(f"Failed to read audio file: {e}", "ERROR")
             return f"Failed to read audio file: {str(e)}"
+    
+    def cleanup(self):
+        """Clean up Vosk models to prevent memory leaks"""
+        try:
+            if self.en_model:
+                del self.en_model
+                self.en_model = None
+            if self.hi_model:
+                del self.hi_model
+                self.hi_model = None
+            self._models_loaded = False
+            debug_log("Vosk models cleaned up", "DEBUG")
+        except Exception as e:
+            debug_log(f"Error cleaning up models: {e}", "WARNING")
+    
+    def __del__(self):
+        """Destructor to ensure cleanup"""
+        self.cleanup()
