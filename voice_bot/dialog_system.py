@@ -52,10 +52,10 @@ class IntentRecognizer:
                 r'\b(how are you|how do you do)\b',
                 r'\b(nice to meet you|pleased to meet you)\b',
                 
-                # Hindi patterns
-                r'\b(नमस्ते|नमस्कार|हैलो|हाय|सुप्रभात|शुभ संध्या)\b',
-                r'\b(आप कैसे हैं|कैसे हो|कैसी हैं)\b',
-                r'\b(मिलकर खुशी हुई|आपसे मिलकर अच्छा लगा)\b'
+                # Hindi patterns (without word boundaries for Devanagari)
+                r'(नमस्ते|नमस्कार|हैलो|हाय|सुप्रभात|शुभ संध्या)',
+                r'(आप कैसे हैं|कैसे हो|कैसी हैं)',
+                r'(मिलकर खुशी हुई|आपसे मिलकर अच्छा लगा)'
             ],
             
             Intent.GOODBYE: [
@@ -64,10 +64,10 @@ class IntentRecognizer:
                 r'\b(have a good day|have a nice day)\b',
                 r'\b(catch you later|talk to you later)\b',
                 
-                # Hindi patterns
-                r'\b(अलविदा|बाय|फिर मिलते हैं|खुदा हाफिज)\b',
-                r'\b(शुभ दिन|अच्छा दिन)\b',
-                r'\b(बाद में बात करते हैं|फिर बात करते हैं)\b'
+                # Hindi patterns (without word boundaries for Devanagari)
+                r'(अलविदा|बाय|फिर मिलते हैं|खुदा हाफिज)',
+                r'(शुभ दिन|अच्छा दिन)',
+                r'(बाद में बात करते हैं|फिर बात करते हैं)'
             ],
             
             Intent.HELP: [
@@ -76,10 +76,10 @@ class IntentRecognizer:
                 r'\b(how does this work|how to use)\b',
                 r'\b(what are your capabilities|what can you help with)\b',
                 
-                # Hindi patterns
-                r'\b(मदद|सहायता|क्या आप मदद कर सकते हैं)\b',
-                r'\b(यह कैसे काम करता है|कैसे उपयोग करें)\b',
-                r'\b(आप क्या कर सकते हैं|क्या मदद कर सकते हैं)\b'
+                # Hindi patterns (without word boundaries for Devanagari)
+                r'(मदद|सहायता|क्या आप मदद कर सकते हैं)',
+                r'(यह कैसे काम करता है|कैसे उपयोग करें)',
+                r'(आप क्या कर सकते हैं|क्या मदद कर सकते हैं)'
             ],
             
             Intent.SMALL_TALK: [
@@ -89,13 +89,16 @@ class IntentRecognizer:
                 r'\b(what time is it|what is the time)\b',
                 r'\b(how old are you|what is your age)\b',
                 r'\b(where are you from|where do you live)\b',
+                r'\b(I am doing|I\'m doing|doing great|doing well|doing fine|doing good)\b',
+                r'\b(I feel|I\'m feeling|feeling great|feeling well|feeling good)\b',
                 
-                # Hindi patterns
-                r'\b(मौसम कैसा है|आज मौसम कैसा है)\b',
-                r'\b(आपके बारे में बताइए|आप कौन हैं)\b',
-                r'\b(क्या समय हुआ है|समय क्या है)\b',
-                r'\b(आपकी उम्र क्या है|आप कितने साल के हैं)\b',
-                r'\b(आप कहाँ से हैं|आप कहाँ रहते हैं)\b'
+                # Hindi patterns (without word boundaries for Devanagari)
+                r'(मौसम कैसा है|आज मौसम कैसा है)',
+                r'(आपके बारे में बताइए|आप कौन हैं)',
+                r'(क्या समय हुआ है|समय क्या है)',
+                r'(आपकी उम्र क्या है|आप कितने साल के हैं)',
+                r'(आप कहाँ से हैं|आप कहाँ रहते हैं)',
+                r'(मैं ठीक हूँ|मैं अच्छा हूँ|मैं बहुत अच्छा हूँ)'
             ]
         }
     
@@ -105,22 +108,22 @@ class IntentRecognizer:
             "what_is_voice_bot": [
                 r'\b(what is a voice bot|what is voice assistant)\b',
                 r'\b(explain voice bot|define voice bot)\b',
-                r'\b(क्या है वॉयस बॉट|वॉयस असिस्टेंट क्या है)\b'
+                r'(क्या है वॉयस बॉट|वॉयस असिस्टेंट क्या है)'
             ],
             "how_it_works": [
                 r'\b(how does voice recognition work|how does speech recognition work)\b',
                 r'\b(how does tts work|how does text to speech work)\b',
-                r'\b(वॉयस रिकग्निशन कैसे काम करता है|स्पीच रिकग्निशन कैसे काम करता है)\b'
+                r'(वॉयस रिकग्निशन कैसे काम करता है|स्पीच रिकग्निशन कैसे काम करता है)'
             ],
             "supported_languages": [
                 r'\b(what languages do you support|which languages are supported)\b',
                 r'\b(do you speak hindi|do you understand hindi)\b',
-                r'\b(कौन सी भाषाएं सपोर्ट करते हैं|हिंदी बोलते हैं)\b'
+                r'(कौन सी भाषाएं सपोर्ट करते हैं|हिंदी बोलते हैं)'
             ],
             "privacy": [
                 r'\b(is my data safe|do you store my conversations)\b',
                 r'\b(privacy policy|data protection)\b',
-                r'\b(क्या मेरा डेटा सुरक्षित है|प्राइवेसी पॉलिसी)\b'
+                r'(क्या मेरा डेटा सुरक्षित है|प्राइवेसी पॉलिसी)'
             ]
         }
     

@@ -75,6 +75,17 @@ def run_manual_mode():
     print(f"{Fore.CYAN}=================================={Style.RESET_ALL}")
     
     try:
+        # Initialize lightweight VoiceBot for dialog system
+        print(f"{Fore.YELLOW}⏳ Initializing dialog system...{Style.RESET_ALL}")
+        voice_bot = None
+        try:
+            from voice_bot.voice_bot import VoiceBot
+            voice_bot = VoiceBot(models_dir="models")
+            print(f"{Fore.GREEN}✅ Dialog system ready{Style.RESET_ALL}")
+        except Exception as e:
+            print(f"{Fore.YELLOW}⚠️  Dialog system initialization failed: {e}{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}   Dialog responses will be disabled{Style.RESET_ALL}")
+            print(f"{Fore.YELLOW}   You can still record and transcribe audio{Style.RESET_ALL}")
         
         # Initialize audio recorder and transcriber
         print(f"{Fore.YELLOW}⏳ Initializing audio components...{Style.RESET_ALL}")
@@ -236,13 +247,44 @@ def run_manual_mode():
                                 print(f"\n{Fore.MAGENTA}📝 Transcript:{Style.RESET_ALL}")
                                 print(f"{Fore.WHITE}'{transcript}'{Style.RESET_ALL}")
                                 
-                                # Speak the transcript back using system TTS
-                                print(f"\n{Fore.WHITE}🔊 Speaking transcript...{Style.RESET_ALL}")
-                                try:
-                                    import subprocess
-                                    subprocess.run(["say", f"I heard you say: {transcript}"], check=True)
-                                except Exception as e:
-                                    print(f"{Fore.YELLOW}⚠️  TTS failed: {e}{Style.RESET_ALL}")
+                                # Process through dialog system if available
+                                if voice_bot:
+                                    print(f"\n{Fore.CYAN}🤖 Processing through dialog system...{Style.RESET_ALL}")
+                                    try:
+                                        # Detect language first
+                                        print(f"{Fore.BLUE}🌐 Detecting language...{Style.RESET_ALL}")
+                                        detected_language, confidence = voice_bot.language_detector.detect_language(transcript)
+                                        print(f"{Fore.BLUE}🌐 Language detected: {detected_language} (confidence: {confidence:.2f}){Style.RESET_ALL}")
+                                        
+                                        # Get intelligent response from dialog system
+                                        response = voice_bot.process_text(transcript, detected_language)
+                                        print(f"{Fore.GREEN}🔊 Response: '{response}'{Style.RESET_ALL}")
+                                        
+                                        # Speak the intelligent response
+                                        print(f"\n{Fore.WHITE}🔊 Speaking response...{Style.RESET_ALL}")
+                                        try:
+                                            import subprocess
+                                            subprocess.run(["say", response], check=True)
+                                        except Exception as e:
+                                            print(f"{Fore.YELLOW}⚠️  TTS failed: {e}{Style.RESET_ALL}")
+                                            
+                                    except Exception as e:
+                                        print(f"{Fore.YELLOW}⚠️  Dialog processing failed: {e}{Style.RESET_ALL}")
+                                        # Fallback to simple echo
+                                        print(f"\n{Fore.WHITE}🔊 Speaking transcript (fallback)...{Style.RESET_ALL}")
+                                        try:
+                                            import subprocess
+                                            subprocess.run(["say", f"I heard you say: {transcript}"], check=True)
+                                        except Exception as e:
+                                            print(f"{Fore.YELLOW}⚠️  TTS failed: {e}{Style.RESET_ALL}")
+                                else:
+                                    # Fallback to simple echo if dialog system not available
+                                    print(f"\n{Fore.WHITE}🔊 Speaking transcript (dialog system not available)...{Style.RESET_ALL}")
+                                    try:
+                                        import subprocess
+                                        subprocess.run(["say", f"I heard you say: {transcript}"], check=True)
+                                    except Exception as e:
+                                        print(f"{Fore.YELLOW}⚠️  TTS failed: {e}{Style.RESET_ALL}")
                             else:
                                 print(f"{Fore.YELLOW}⚠️  No speech detected{Style.RESET_ALL}")
                                 try:

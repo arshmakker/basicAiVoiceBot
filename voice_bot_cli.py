@@ -176,12 +176,7 @@ class VoiceBotCLI:
             
             # Show loading progress
             print(f"{Fore.BLUE}💡 Loading models - this may take 10-20 seconds{Style.RESET_ALL}")
-            print(f"{Fore.YELLOW}⏳ Progress will be shown below:{Style.RESET_ALL}")
-            
-            # Start progress bar
-            from progress_bar import LoadingProgress
-            progress = LoadingProgress(total_time=20)
-            progress.start()
+            print(f"{Fore.YELLOW}⏳ Please wait while models are loading...{Style.RESET_ALL}")
             
             # Initialize voice bot (this is where the "hanging" happens)
             debug_log("Creating VoiceBot instance", "DEBUG")
@@ -195,9 +190,6 @@ class VoiceBotCLI:
                 sample_rate=args.sample_rate,
                 chunk_size=args.chunk_size
             )
-            
-            # Stop progress bar
-            progress.stop()
             
             # Set up callbacks
             self.voice_bot.on_speech_detected = self._on_speech_detected
@@ -374,6 +366,18 @@ class VoiceBotCLI:
         
         try:
             from voice_bot.audio_utils import AudioRecorder, AudioTranscriber
+            
+            # Initialize VoiceBot for dialog system integration
+            if not self.voice_bot:
+                print(f"{Fore.YELLOW}⏳ Initializing dialog system for manual mode...{Style.RESET_ALL}")
+                try:
+                    from voice_bot.voice_bot import VoiceBot
+                    self.voice_bot = VoiceBot(models_dir=getattr(self, 'models_dir', 'models'))
+                    print(f"{Fore.GREEN}✅ Dialog system ready{Style.RESET_ALL}")
+                except Exception as e:
+                    print(f"{Fore.YELLOW}⚠️  Dialog system initialization failed: {e}{Style.RESET_ALL}")
+                    print(f"{Fore.YELLOW}   Dialog responses will be disabled{Style.RESET_ALL}")
+                    print(f"{Fore.YELLOW}   You can still record and transcribe audio{Style.RESET_ALL}")
             
             # Initialize audio recorder and transcriber
             recorder = AudioRecorder()
@@ -681,7 +685,7 @@ Dialog Integration Features:
             # For interactive mode, don't start the voice bot, just run interactive commands
             cli.run_interactive_mode()
         elif args.mode == 'manual':
-            # For manual mode, use transcription without full voice bot
+            # For manual mode, initialize VoiceBot for dialog system integration
             cli.run_manual_mode()
         else:
             # For voice mode, start the voice bot first
