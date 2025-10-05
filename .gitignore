@@ -284,6 +284,15 @@ $RECYCLE.BIN/
 # Voice Bot Project Specific
 # ==========================
 
+# Model backup and temporary directories
+models_backup_test/
+models_temp_test/
+
+# Debug and log files
+audio_debug.log
+voice_bot_debug.log
+*.log
+
 # Keep model directories but ignore large model files
 models/*/
 !models/*/README
@@ -298,7 +307,6 @@ models/*/
 # *.md
 !README.md
 !PROJECT_SUMMARY.md
-!*.log
 
 # Keep requirements files
 # requirements*.txt
@@ -310,3 +318,39 @@ models/*/
 
 # Ignore version files that might contain build info
 version.py
+
+# Temporary and backup files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Virtual environment
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
