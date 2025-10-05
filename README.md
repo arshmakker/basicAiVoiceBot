@@ -51,7 +51,7 @@ A complete Python voice bot implementation that supports real-time conversation 
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/arshmakker/basicAiVoiceBot.git
 cd basicAiVoiceBot
 ```
 
@@ -387,7 +387,7 @@ python voice_bot.py simple
 
 ## 🤝 Contributing
 
-1. Fork the repository
+1. Fork the repository: [https://github.com/arshmakker/basicAiVoiceBot](https://github.com/arshmakker/basicAiVoiceBot)
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
 4. Test thoroughly (especially on macOS)
@@ -439,7 +439,7 @@ python test_*.py
 For issues and questions:
 
 1. Check the troubleshooting section above
-2. Search existing issues on GitHub
+2. Search existing issues on [GitHub](https://github.com/arshmakker/basicAiVoiceBot/issues)
 3. Create a new issue with:
    - System information (macOS version, Python version)
    - Error logs from `voice_bot_debug.log`
