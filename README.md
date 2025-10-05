@@ -1,17 +1,19 @@
 # Voice Bot - Multilingual Voice Assistant
 
-A complete Python voice bot implementation that supports real-time conversation in English and Hindi using open-source technologies.
+A complete Python voice bot implementation that supports real-time conversation in English and Hindi using open-source technologies. Features multiple operation modes including manual recording, automatic voice activity detection, and audio visualization.
 
 ## Features
 
-- 🎤 **Speech Recognition**: Uses Vosk and Whisper for accurate speech-to-text conversion
-- 🔊 **Text-to-Speech**: Powered by Coqui TTS for natural-sounding speech synthesis
+- 🎤 **Speech Recognition**: Uses Vosk for accurate speech-to-text conversion (English & Hindi)
+- 🔊 **Text-to-Speech**: Multiple TTS options including system TTS and Coqui TTS
 - 🌐 **Language Detection**: Automatically detects and responds in English or Hindi
 - 💬 **Dialog System**: Intelligent conversation handling with intent recognition
-- 🎯 **Intent Recognition**: Supports greeting, FAQ, small talk, and fallback responses
+- 🎯 **Multiple Modes**: Simple, Smart (VAD), Manual, Full, and Test modes
 - 📱 **Command Line Interface**: Easy-to-use CLI with interactive and voice modes
+- 🎨 **Audio Visualization**: Real-time voice modulation display
 - 🔧 **Modular Design**: Extensible architecture for adding new features
-- 🛡️ **Error Handling**: Robust error handling for ASR/TTS failures
+- 🛡️ **Error Handling**: Robust error handling and recovery mechanisms
+- 🎮 **Manual Control**: Single-key commands for recording control
 
 ## Supported Languages
 
@@ -21,15 +23,15 @@ A complete Python voice bot implementation that supports real-time conversation 
 ## Requirements
 
 ### System Requirements
-- Python 3.8 or higher
+- Python 3.8 or higher (tested with Python 3.13)
 - Microphone and speakers/headphones
-- At least 4GB RAM (8GB recommended)
-- Optional: GPU for faster processing
+- At least 4GB RAM (8GB recommended for full mode)
+- macOS 10.14+ (primary development platform)
 
-### Operating Systems
-- ✅ Linux (Ubuntu 18.04+, CentOS 7+)
-- ✅ Windows 10/11
-- ✅ macOS 10.14+
+### Audio Requirements
+- Working microphone (macOS may require permission grants)
+- Audio output device (speakers/headphones)
+- Stable audio environment for best recognition
 
 ## Installation
 
@@ -61,108 +63,139 @@ pip install -r requirements.txt
 
 ### 4. Download Required Models
 
-```bash
-# Download all models automatically
-python download_models.py --all
+The project includes automatic model downloading. Models are stored in the `models/` directory:
 
-# Or download specific models
-python download_models.py --model vosk_en
-python download_models.py --model vosk_hi
-python download_models.py --model whisper
-```
-
-**Note**: Model download may take 10-30 minutes depending on your internet connection.
+- `vosk-model-en-us-0.22` - English speech recognition
+- `vosk-model-hi-0.22` - Hindi speech recognition
 
 ## Quick Start
 
-### Basic Usage
+### Simple Usage
 
 ```bash
-# Run voice bot with default settings
-python voice_bot_cli.py
+# Run with native audio access (recommended)
+./run_native_audio.sh
+
+# Or run directly
+python voice_bot.py
 ```
 
-### Interactive Mode
+### Available Modes
 
+The voice bot supports multiple operation modes:
+
+#### 1. **Manual Mode** (Recommended)
 ```bash
-# Run in interactive mode for testing
-python voice_bot_cli.py --mode interactive
+python voice_bot.py manual
 ```
+- Single-key commands: `s` (start), `t` (stop), `q` (quit), `h` (help)
+- Full audio transcription
+- Voice feedback for recording status
+- Non-blocking recording with threading
 
-### Advanced Usage
-
+#### 2. **Smart Mode** (Auto VAD)
 ```bash
-# Run with custom settings
-python voice_bot_cli.py --models-dir ./models --use-gpu --verbose
+python voice_bot.py smart
+```
+- Automatic voice activity detection
+- Auto start/stop recording based on speech
+- 3-second silence timeout
+- Real-time audio visualization
+
+#### 3. **Simple Mode**
+```bash
+python voice_bot.py simple
+```
+- Basic startup announcement
+- Minimal functionality
+- Quick testing without heavy models
+
+#### 4. **Full Mode**
+```bash
+python voice_bot.py full
+```
+- Complete voice bot with all features
+- May take time to load (heavy models)
+- Full dialog system
+
+#### 5. **Test Mode**
+```bash
+python voice_bot.py test
+```
+- System diagnostics
+- Audio device testing
+- Component verification
+
+## 📚 **Complete Usage Guide**
+
+For detailed instructions on all modes and features, see the **[Complete Usage Guide](USAGE_GUIDE.md)**.
+
+### Quick Examples
+
+#### Manual Recording Example
+```bash
+python voice_bot.py manual
 ```
 
-## Usage Examples
+Output:
+```
+🎮 Starting Manual Voice Bot Mode
+==================================
+✅ Audio transcriber ready
+🔊 Startup: Hey, We ready to rumble! Manual recording activated.
 
-### Voice Commands
+Voice Bot> s
+🔴 RECORDING STARTED
+💡 Type 't' + Enter to stop recording
 
-**English:**
-- "Hello" - Greet the bot
-- "How are you?" - Small talk
-- "What can you do?" - Get help
-- "What is a voice bot?" - Learn about voice bots
-- "Goodbye" - End conversation
+Voice Bot> t
+⏹️  RECORDING STOPPED
+📊 Recording stats:
+  • Duration: 5.2 seconds
+  • Audio chunks: 42
+  • Total size: 170496 bytes
 
-**Hindi:**
-- "नमस्ते" - Greet the bot
-- "आप कैसे हैं?" - Small talk
-- "आप क्या कर सकते हैं?" - Get help
-- "वॉयस बॉट क्या है?" - Learn about voice bots
-- "अलविदा" - End conversation
+📝 Transcript: 'Hello, how are you today?'
 
-### Interactive Commands
+🔊 Speaking transcript...
+✅ Transcription completed
+```
 
-When running in interactive mode, you can use these commands:
+#### Interactive Commands (Manual Mode)
 
-- `help` - Show help information
-- `status` - Display bot status
-- `history` - Show conversation history
-- `clear` - Clear conversation history
-- `speak <text>` - Make bot speak text
-- `text <text>` - Process text and get response
-- `quit` - Exit the program
+When running in manual mode:
 
-## Configuration
+- **`s` + Enter** - Start recording
+- **`t` + Enter** - Stop recording  
+- **`q` + Enter** - Quit the bot
+- **`h` + Enter** - Show help
+
+## ⚙️ Configuration
 
 ### Command Line Options
 
 ```bash
-python voice_bot_cli.py [OPTIONS]
+python voice_bot.py [MODE] [OPTIONS]
 
-Model Configuration:
-  --models-dir DIR          Directory containing model files (default: models)
-  --vosk-en-model PATH      Path to English Vosk model
-  --vosk-hi-model PATH      Path to Hindi Vosk model
-  --whisper-model SIZE      Whisper model size: tiny, base, small, medium, large (default: medium)
+Modes:
+  manual    - Manual start/stop with single key commands
+  smart     - Auto start/stop recording (recommended)
+  simple    - Basic voice bot with startup announcement
+  full      - Complete voice bot (may hang)
+  test      - Run tests
 
-TTS Configuration:
-  --tts-language LANG       Default TTS language: en, hi (default: en)
-  --use-gpu                 Use GPU acceleration (if available)
-
-Audio Configuration:
-  --sample-rate RATE        Audio sample rate (default: 16000)
-  --chunk-size SIZE         Audio chunk size (default: 1024)
-
-Runtime Configuration:
-  --mode MODE               Run mode: voice, interactive (default: voice)
-  --verbose, -v             Enable verbose logging
+Options:
+  --help, -h     Show help message
 ```
 
 ### Environment Variables
 
-You can also set these environment variables:
-
 ```bash
 export VOICE_BOT_MODELS_DIR="/path/to/models"
-export VOICE_BOT_USE_GPU="true"
-export VOICE_BOT_TTS_LANGUAGE="hi"
+export VOICE_BOT_DEBUG="true"  # Enable debug logging
 ```
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 basicAiVoiceBot/
@@ -173,233 +206,120 @@ basicAiVoiceBot/
 │   ├── language_detection.py # Language detection
 │   ├── dialog_system.py      # Dialog management
 │   ├── audio_utils.py        # Audio processing utilities
-│   └── voice_bot.py          # Main voice bot class
-├── models/                   # Model files directory
+│   ├── voice_bot.py          # Main voice bot class
+│   └── logging_utils.py      # Logging configuration
+├── models/                   # Vosk model files
+│   ├── vosk-model-en-us-0.22/  # English model
+│   └── vosk-model-hi-0.22/     # Hindi model
+├── voice_bot.py              # Main entry point
 ├── voice_bot_cli.py          # Command line interface
-├── download_models.py        # Model downloader script
+├── run_native_audio.sh       # Native audio runner
 ├── requirements.txt          # Python dependencies
+├── requirements_simple.txt   # Simplified dependencies
+├── USAGE_GUIDE.md           # Complete usage guide
 └── README.md                # This file
 ```
 
-## API Usage
-
-### Basic API Example
-
-```python
-from voice_bot import VoiceBot
-
-# Initialize voice bot
-bot = VoiceBot(models_dir="models")
-
-# Set up callbacks
-def on_speech(text):
-    print(f"Detected: {text}")
-
-def on_response(response):
-    print(f"Response: {response}")
-
-bot.on_speech_detected = on_speech
-bot.on_response_generated = on_response
-
-# Start the bot
-with bot:
-    # Bot will run until interrupted
-    input("Press Enter to stop...")
-```
-
-### Text Processing Example
-
-```python
-from voice_bot import VoiceBot
-
-bot = VoiceBot()
-
-# Process text input
-response = bot.process_text("Hello, how are you?")
-print(f"Bot response: {response}")
-
-# Speak response
-bot.speak(response)
-```
-
-### Custom Language Detection
-
-```python
-from voice_bot import LanguageDetector
-
-detector = LanguageDetector()
-
-# Detect language
-language, confidence = detector.detect_language("नमस्ते, आप कैसे हैं?")
-print(f"Language: {language}, Confidence: {confidence}")
-```
-
-## Troubleshooting
+## 🔧 Troubleshooting
 
 ### Common Issues
 
-#### 1. Audio Device Issues
+#### 1. **Microphone Permission Issues (macOS)**
+**Problem**: "No working microphone found" or audio not working
 
-**Problem**: "No audio device found" or "PyAudio error"
+**Solution:**
+1. Go to System Preferences → Security & Privacy → Privacy → Microphone
+2. Add Terminal/iTerm/VSCode to allowed applications
+3. Restart the application after granting permission
 
-**Solutions**:
-```bash
-# On Ubuntu/Debian
-sudo apt-get install portaudio19-dev python3-pyaudio
+#### 2. **Bus Error / Segmentation Fault**
+**Problem**: Bot crashes with "Bus error"
 
-# On CentOS/RHEL
-sudo yum install portaudio-devel python3-pyaudio
+**Solution:**
+- Use **Manual Mode** - has better error handling
+- Use **Simple Mode** - avoids heavy models
+- The bot continues even if transcription fails
 
-# On macOS
-brew install portaudio
+#### 3. **High Memory Usage**
+**Problem**: Python using 15GB+ memory
 
-# On Windows
-pip install pipwin
-pipwin install pyaudio
-```
+**Solution:**
+- Use **Manual Mode** or **Simple Mode**
+- Restart if memory usage becomes excessive
+- The bot includes automatic memory cleanup
 
-#### 2. Model Download Issues
+For more detailed troubleshooting, see the **[Complete Usage Guide](USAGE_GUIDE.md)**.
 
-**Problem**: Models fail to download
+## 🧪 Testing
 
-**Solutions**:
-```bash
-# Check internet connection
-ping google.com
-
-# Try downloading individual models
-python download_models.py --model vosk_en
-python download_models.py --model whisper
-
-# Check available disk space
-df -h
-```
-
-#### 3. GPU Issues
-
-**Problem**: GPU not being used despite `--use-gpu` flag
-
-**Solutions**:
-```bash
-# Check GPU availability
-nvidia-smi
-
-# Install GPU-enabled PyTorch
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-
-# Verify GPU support
-python -c "import torch; print(torch.cuda.is_available())"
-```
-
-#### 4. Permission Issues
-
-**Problem**: "Permission denied" errors
-
-**Solutions**:
-```bash
-# Make scripts executable
-chmod +x voice_bot_cli.py
-chmod +x download_models.py
-
-# Check microphone permissions (Linux)
-sudo usermod -a -G audio $USER
-```
-
-### Performance Optimization
-
-#### For Better Performance:
-
-1. **Use GPU**: Enable GPU acceleration if available
-2. **Model Size**: Use smaller models for faster processing:
-   ```bash
-   python voice_bot_cli.py --whisper-model tiny
-   ```
-3. **Audio Settings**: Adjust sample rate and chunk size:
-   ```bash
-   python voice_bot_cli.py --sample-rate 8000 --chunk-size 512
-   ```
-
-#### For Better Accuracy:
-
-1. **Use Larger Models**: Use larger Whisper models for better accuracy
-2. **Quiet Environment**: Use in a quiet environment for better recognition
-3. **Clear Speech**: Speak clearly and at moderate pace
-
-## Development
-
-### Adding New Intents
-
-To add new conversation intents, modify `voice_bot/dialog_system.py`:
-
-```python
-# Add new intent patterns
-Intent.NEW_INTENT: [
-    r'\b(pattern1|pattern2)\b',
-    r'\b(हिंदी पैटर्न)\b'
-]
-
-# Add responses
-"NEW_INTENT": {
-    "en": ["English response 1", "English response 2"],
-    "hi": ["हिंदी जवाब 1", "हिंदी जवाब 2"]
-}
-```
-
-### Adding New Languages
-
-To add support for new languages:
-
-1. Add language patterns to `LanguageDetector`
-2. Add TTS models for the language
-3. Add ASR models for the language
-4. Update dialog system with new language responses
-
-### Testing
+### Run System Tests
 
 ```bash
-# Run tests (if available)
-python -m pytest tests/
+# Test all components
+python voice_bot.py test
 
-# Test individual components
-python -c "from voice_bot import LanguageDetector; print('Language detection works')"
-python -c "from voice_bot import VoiceBot; print('Voice bot imports successfully')"
+# Test specific functionality
+python test_audio_devices.py
+python test_voice_input_debug.py
 ```
 
-## Contributing
+### Manual Testing
+
+```bash
+# Test manual mode
+python voice_bot.py manual
+
+# Test smart mode
+python voice_bot.py smart
+
+# Test simple mode
+python voice_bot.py simple
+```
+
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+4. Test thoroughly (especially on macOS)
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
-## License
+## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the Private License - see the LICENSE file for details.
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
 - [Vosk](https://alphacephei.com/vosk/) for speech recognition
-- [Whisper](https://github.com/openai/whisper) for additional speech recognition
 - [Coqui TTS](https://github.com/coqui-ai/TTS) for text-to-speech
 - [PyAudio](https://pypi.org/project/PyAudio/) for audio processing
+- macOS system TTS for reliable voice output
 
-## Support
+## 📞 Support
 
 For issues and questions:
 
 1. Check the troubleshooting section above
 2. Search existing issues on GitHub
-3. Create a new issue with detailed information
-4. Include system information and error logs
+3. Create a new issue with:
+   - System information (macOS version, Python version)
+   - Error logs from `voice_bot_debug.log`
+   - Steps to reproduce the issue
 
-## Changelog
+## 📈 Changelog
+
+### Version 2.0.0 (Current)
+- ✅ Removed Docker support (macOS audio limitations)
+- ✅ Added Manual Mode with single-key commands
+- ✅ Added Smart Mode with Voice Activity Detection
+- ✅ Added audio visualization and real-time feedback
+- ✅ Improved error handling and memory management
+- ✅ Added comprehensive testing and debugging tools
+- ✅ Enhanced macOS compatibility and troubleshooting
 
 ### Version 1.0.0
-- Initial release
-- English and Hindi support
-- Vosk and Whisper ASR integration
-- Coqui TTS integration
-- Command line interface
-- Modular architecture
-- Error handling and logging
+- Initial release with basic voice bot functionality
+- English and Hindi support with Vosk models
+- Basic CLI interface and dialog system
