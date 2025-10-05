@@ -64,6 +64,8 @@ class VoiceBotCLI:
         debug_log("Initializing VoiceBotCLI", "DEBUG")
         self.voice_bot: Optional[VoiceBot] = None
         self.running = False
+        self.conversation_context = []  # Store conversation history
+        self.conversation_state = "idle"  # Track conversation state
         
         # Set up signal handlers for graceful shutdown
         debug_log("Setting up signal handlers", "DEBUG")
@@ -368,6 +370,7 @@ class VoiceBotCLI:
         debug_log("Starting manual mode", "DEBUG")
         print(f"\n{Fore.CYAN}🎤 Manual Mode - Press 's' + Enter to record, 't' + Enter to stop{Style.RESET_ALL}")
         print(f"{Fore.YELLOW}💡 Controls: 's' + Enter = start, 't' + Enter = stop, 'q' + Enter = quit, 'h' + Enter = help{Style.RESET_ALL}")
+        print(f"{Fore.GREEN}🤖 Dialog Integration: Intelligent responses with language detection and context awareness{Style.RESET_ALL}")
         
         try:
             from voice_bot.audio_utils import AudioRecorder, AudioTranscriber
@@ -432,14 +435,63 @@ class VoiceBotCLI:
                                     print(f"\n{Fore.MAGENTA}📝 Transcript:{Style.RESET_ALL}")
                                     print(f"{Fore.WHITE}'{transcript}'{Style.RESET_ALL}")
                                     
-                                    # Speak the transcript back
-                                    print(f"\n{Fore.WHITE}🔊 Speaking transcript...{Style.RESET_ALL}")
-                                    if self.voice_bot:
-                                        self.voice_bot.speak(f"I heard you say: {transcript}")
-                                    else:
-                                        # Fallback to system TTS
-                                        import subprocess
-                                        subprocess.run(["say", f"I heard you say: {transcript}"], check=True)
+                                    # Process through dialog system instead of echo
+                                    print(f"\n{Fore.CYAN}🤖 Processing through dialog system...{Style.RESET_ALL}")
+                                    debug_log(f"Processing transcript: '{transcript}'", "DEBUG")
+                                    try:
+                                        if self.voice_bot:
+                                            # Detect language first
+                                            print(f"{Fore.BLUE}🌐 Detecting language...{Style.RESET_ALL}")
+                                            debug_log("Starting language detection", "DEBUG")
+                                            detected_language, confidence = self.voice_bot.language_detector.detect_language(transcript)
+                                            print(f"{Fore.BLUE}🌐 Language detected: {detected_language} (confidence: {confidence:.2f}){Style.RESET_ALL}")
+                                            debug_log(f"Language detected: {detected_language} (confidence: {confidence:.2f})", "DEBUG")
+                                            
+                                            # Get intelligent response from dialog system
+                                            debug_log("Processing through dialog system", "DEBUG")
+                                            response = self.voice_bot.process_text(transcript, detected_language)
+                                            print(f"{Fore.GREEN}🔊 Response: '{response}'{Style.RESET_ALL}")
+                                            debug_log(f"Dialog response generated: '{response}'", "DEBUG")
+                                            
+                                            # Update conversation context
+                                            self.conversation_context.append({
+                                                'turn': len(self.conversation_context) + 1,
+                                                'input': transcript,
+                                                'response': response,
+                                                'language': detected_language,
+                                                'confidence': confidence,
+                                                'timestamp': time.time()
+                                            })
+                                            debug_log(f"Conversation context updated: {len(self.conversation_context)} turns", "DEBUG")
+                                            
+                                            # Update conversation state
+                                            self.conversation_state = "active"
+                                            debug_log(f"Conversation state: {self.conversation_state}", "DEBUG")
+                                            
+                                            # Speak the intelligent response
+                                            print(f"{Fore.WHITE}🔊 Speaking response...{Style.RESET_ALL}")
+                                            debug_log(f"Speaking response in language: {detected_language}", "DEBUG")
+                                            self.voice_bot.speak(response, detected_language)
+                                            debug_log("Response spoken successfully", "DEBUG")
+                                        else:
+                                            # Fallback to echo if voice_bot not available
+                                            print(f"{Fore.YELLOW}⚠️  Voice bot not available, using fallback{Style.RESET_ALL}")
+                                            debug_log("Voice bot not available, using fallback", "WARNING")
+                                            print(f"{Fore.WHITE}🔊 Speaking transcript...{Style.RESET_ALL}")
+                                            import subprocess
+                                            subprocess.run(["say", f"I heard you say: {transcript}"], check=True)
+                                    except Exception as e:
+                                        print(f"{Fore.RED}❌ Dialog system error: {e}{Style.RESET_ALL}")
+                                        debug_log(f"Dialog system error: {e}", "ERROR")
+                                        # Fallback response
+                                        fallback_response = "I'm sorry, I'm having trouble processing your request right now. Please try again."
+                                        print(f"{Fore.YELLOW}🔄 Fallback: '{fallback_response}'{Style.RESET_ALL}")
+                                        debug_log(f"Using fallback response: '{fallback_response}'", "WARNING")
+                                        if self.voice_bot:
+                                            self.voice_bot.speak(fallback_response)
+                                        else:
+                                            import subprocess
+                                            subprocess.run(["say", fallback_response], check=True)
                                 else:
                                     print(f"{Fore.YELLOW}⚠️  No speech detected{Style.RESET_ALL}")
                                     if self.voice_bot:
@@ -463,10 +515,36 @@ class VoiceBotCLI:
                     elif command in ['h', 'help']:
                         print(f"{Fore.CYAN}Commands (type + Enter):{Style.RESET_ALL}")
                         print(f"  {Fore.WHITE}s / start{Style.RESET_ALL} - Begin recording")
-                        print(f"  {Fore.WHITE}t / stop{Style.RESET_ALL}  - Stop recording")
+                        print(f"  {Fore.WHITE}t / stop{Style.RESET_ALL}  - Stop recording and process through dialog system")
                         print(f"  {Fore.WHITE}q / quit{Style.RESET_ALL}  - Exit the bot")
                         print(f"  {Fore.WHITE}h / help{Style.RESET_ALL}  - Show this help")
+                        print(f"  {Fore.WHITE}c / context{Style.RESET_ALL} - Show conversation history")
+                        print(f"  {Fore.WHITE}clear{Style.RESET_ALL} - Clear conversation history")
+                        print(f"\n{Fore.YELLOW}💡 Dialog Integration:{Style.RESET_ALL}")
+                        print(f"  {Fore.GREEN}✅ Intelligent responses{Style.RESET_ALL} - Uses dialog system instead of echo")
+                        print(f"  {Fore.GREEN}✅ Language detection{Style.RESET_ALL} - Automatically detects English/Hindi")
+                        print(f"  {Fore.GREEN}✅ Context awareness{Style.RESET_ALL} - Maintains conversation context")
+                        print(f"  {Fore.GREEN}✅ Error handling{Style.RESET_ALL} - Graceful fallback responses")
                         print(f"\n{Fore.YELLOW}💡 Remember: Type the command and press Enter!{Style.RESET_ALL}")
+                        
+                    elif command in ['c', 'context']:
+                        print(f"\n{Fore.CYAN}📚 Conversation History:{Style.RESET_ALL}")
+                        if self.conversation_context:
+                            for i, turn in enumerate(self.conversation_context):
+                                print(f"\n{Fore.YELLOW}Turn {turn['turn']}:{Style.RESET_ALL}")
+                                print(f"  {Fore.WHITE}Input:{Style.RESET_ALL} '{turn['input']}'")
+                                print(f"  {Fore.WHITE}Response:{Style.RESET_ALL} '{turn['response']}'")
+                                print(f"  {Fore.WHITE}Language:{Style.RESET_ALL} {turn['language']} (confidence: {turn['confidence']:.2f})")
+                                print(f"  {Fore.WHITE}Time:{Style.RESET_ALL} {time.strftime('%H:%M:%S', time.localtime(turn['timestamp']))}")
+                        else:
+                            print(f"  {Fore.YELLOW}No conversation history yet{Style.RESET_ALL}")
+                        print(f"\n{Fore.CYAN}Total turns: {len(self.conversation_context)}{Style.RESET_ALL}")
+                        
+                    elif command == 'clear':
+                        self.conversation_context = []
+                        self.conversation_state = "idle"
+                        print(f"{Fore.GREEN}✅ Conversation history cleared{Style.RESET_ALL}")
+                        debug_log("Conversation context cleared", "DEBUG")
                         
                     elif command == '':
                         continue
@@ -528,14 +606,29 @@ class VoiceBotCLI:
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(
-        description="Voice Bot - Multilingual Voice Assistant",
+        description="Voice Bot - Multilingual Voice Assistant with Keyboard-Controlled Dialog Integration",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
   python voice_bot_cli.py                    # Run with default settings
-  python voice_bot_cli.py --mode interactive  # Run in interactive mode
+  python voice_bot_cli.py --mode manual     # Run in manual mode with keyboard controls
+  python voice_bot_cli.py --mode interactive # Run in interactive mode
   python voice_bot_cli.py --models-dir ./models --use-gpu  # Custom settings
-  python voice_bot_cli.py --verbose           # Enable verbose logging
+  python voice_bot_cli.py --verbose         # Enable verbose logging
+  python voice_bot_cli.py --tts-language hi # Use Hindi TTS
+
+Keyboard Controls (Manual Mode):
+  s + Enter  - Start recording speech
+  t + Enter  - Stop recording and process through dialog system
+  q + Enter  - Quit the application
+  h + Enter  - Show help
+
+Dialog Integration Features:
+  - Intelligent responses instead of simple echo
+  - Language detection (English/Hindi)
+  - Conversation context management
+  - Error handling and fallback responses
+  - Multi-turn conversation support
         """
     )
     

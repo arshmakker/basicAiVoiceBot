@@ -32,7 +32,7 @@ python voice_bot.py
 ## 🎮 **Manual Mode** (Recommended)
 
 ### **What is Manual Mode?**
-Manual mode gives you complete control over recording with simple text commands.
+Manual mode gives you complete control over recording with simple text commands and **intelligent dialog responses**.
 
 ### **How to Use:**
 ```bash
@@ -43,14 +43,16 @@ python voice_bot.py manual
 | Command | Action | Description |
 |---------|--------|-------------|
 | `s` + Enter | Start recording | Begin recording your voice |
-| `t` + Enter | Stop recording | Stop recording and get transcript |
+| `t` + Enter | Stop recording | Stop recording and get intelligent response |
+| `c` + Enter | Show context | Display conversation history |
+| `clear` + Enter | Clear context | Clear conversation history |
 | `q` + Enter | Quit | Exit the bot |
 | `h` + Enter | Help | Show command help |
 
 ### **Example Session:**
 ```
-🎮 Starting Manual Voice Bot Mode
-==================================
+🎮 Starting Manual Voice Bot Mode with Dialog Integration
+========================================================
 ✅ Audio transcriber ready
 🔊 Startup: Hey, We ready to rumble! Manual recording activated.
 
@@ -66,18 +68,153 @@ Voice Bot> t
   • Total size: 170496 bytes
 
 📝 Transcript: 'Hello, how are you today?'
+🌐 Language detected: en (confidence: 0.95)
+🤖 Processing through dialog system...
+💬 Response: Hello! I'm doing well, thank you for asking. How can I help you today?
+🔊 Speaking response...
+✅ Dialog processing completed
 
-🔊 Speaking transcript...
-✅ Transcription completed
+Voice Bot> c
+📚 Conversation Context:
+  1. Input: "Hello, how are you today?" | Language: en | Response: "Hello! I'm doing well..."
+  2. Input: "What's the weather like?" | Language: en | Response: "I don't have access to current weather data..."
+
+Voice Bot> clear
+🧹 Conversation context cleared
+✅ Context cleared successfully
 ```
 
 ### **Features:**
 - ✅ **Single-key commands** - Easy to remember
 - ✅ **Real-time transcription** - See what you said
-- ✅ **Voice feedback** - Bot speaks back the transcript
+- ✅ **Intelligent responses** - Bot processes through dialog system
+- ✅ **Language detection** - Automatic English/Hindi detection
+- ✅ **Conversation context** - Maintains conversation history
 - ✅ **Recording statistics** - Duration and file size
 - ✅ **Multi-language support** - English and Hindi
 - ✅ **Non-blocking recording** - Can type commands while recording
+- ✅ **Context management** - View and clear conversation history
+- ✅ **Fallback responses** - Graceful error handling
+
+---
+
+## 🎯 **Dialog System Integration**
+
+### **What is Dialog System Integration?**
+The Voice Bot now includes intelligent dialog processing that understands your input and generates contextual responses instead of just echoing back what you said.
+
+### **How Dialog Integration Works:**
+
+#### **1. Speech Processing Flow:**
+```
+🎤 Record Speech → 📝 Transcribe → 🌐 Detect Language → 🤖 Process Dialog → 💬 Generate Response → 🔊 Speak Response
+```
+
+#### **2. Language Detection:**
+- **Automatic Detection**: Detects English (`en`) or Hindi (`hi`)
+- **Confidence Scoring**: Shows confidence level (0.0-1.0)
+- **Fallback Handling**: Defaults to English if detection fails
+- **Mixed Language**: Handles mixed English-Hindi input
+
+#### **3. Dialog Processing:**
+- **Intent Recognition**: Understands what you're asking for
+- **Context Awareness**: Remembers previous conversation turns
+- **Response Generation**: Creates intelligent, contextual responses
+- **Error Handling**: Graceful fallback when dialog fails
+
+#### **4. Conversation Context:**
+- **History Tracking**: Stores input, response, language, and timestamp
+- **Context Commands**: Use `c` to view history, `clear` to reset
+- **Multi-turn Conversations**: Bot remembers previous exchanges
+- **Context Export**: Can export conversation history
+
+### **Dialog Integration Commands:**
+
+| Command | Purpose | Example |
+|---------|---------|---------|
+| `s` | Start recording | Begin voice input |
+| `t` | Stop & process | Stop recording and get intelligent response |
+| `c` | Show context | Display conversation history |
+| `clear` | Clear context | Reset conversation history |
+| `h` | Help | Show all available commands |
+
+### **Example Dialog Interactions:**
+
+#### **Greeting & Introduction:**
+```
+Input: "Hello, how are you?"
+Language: en (confidence: 0.95)
+Response: "Hello! I'm doing well, thank you for asking. How can I help you today?"
+```
+
+#### **Question & Answer:**
+```
+Input: "What's the weather like today?"
+Language: en (confidence: 0.92)
+Response: "I don't have access to current weather data, but I'd be happy to help you with other questions!"
+```
+
+#### **Multilingual Support:**
+```
+Input: "नमस्ते, आप कैसे हैं?"
+Language: hi (confidence: 0.88)
+Response: "नमस्ते! मैं ठीक हूं, धन्यवाद। आप कैसे हैं?"
+```
+
+#### **Context-Aware Conversation:**
+```
+Turn 1:
+Input: "My name is John"
+Response: "Nice to meet you, John! How can I help you today?"
+
+Turn 2:
+Input: "What's my name?"
+Response: "Your name is John, as you mentioned earlier."
+```
+
+### **Dialog System Features:**
+
+#### **✅ Intelligent Responses**
+- Contextual understanding of your input
+- Appropriate responses based on intent
+- Natural conversation flow
+
+#### **✅ Language Support**
+- English and Hindi detection
+- Mixed language handling
+- Automatic language switching
+
+#### **✅ Context Management**
+- Conversation history tracking
+- Multi-turn conversation support
+- Context-aware responses
+
+#### **✅ Error Handling**
+- Graceful fallback when dialog fails
+- Fallback responses for common errors
+- System continues working even if dialog fails
+
+#### **✅ Performance Optimization**
+- Fast response generation
+- Efficient memory usage
+- Non-blocking processing
+
+### **Troubleshooting Dialog Integration:**
+
+#### **Dialog System Not Responding:**
+- Check if models are loaded properly
+- Verify language detection is working
+- Try fallback responses
+
+#### **Language Detection Issues:**
+- Speak clearly in one language
+- Avoid mixed languages if possible
+- Check confidence scores
+
+#### **Context Not Working:**
+- Use `c` command to check context
+- Clear context with `clear` if needed
+- Restart bot if context becomes corrupted
 
 ---
 
@@ -283,7 +420,10 @@ python voice_bot.py test
 | **Speech Recognition** | ✅ | ✅ | ❌ | ✅ | ❌ |
 | **Voice Control** | ✅ Manual | ✅ Auto | ❌ | ✅ | ❌ |
 | **Transcription** | ✅ | ✅ | ❌ | ✅ | ❌ |
-| **Dialog System** | ❌ | ❌ | ❌ | ✅ | ❌ |
+| **Dialog System** | ✅ | ❌ | ❌ | ✅ | ❌ |
+| **Language Detection** | ✅ | ❌ | ❌ | ✅ | ❌ |
+| **Context Management** | ✅ | ❌ | ❌ | ✅ | ❌ |
+| **Intelligent Responses** | ✅ | ❌ | ❌ | ✅ | ❌ |
 | **Reliability** | ✅ High | ✅ High | ✅ High | ⚠️ Medium | ✅ High |
 | **Best For** | Most users | Hands-free | Testing | Advanced | Debug |
 
@@ -292,15 +432,18 @@ python voice_bot.py test
 ## 🎯 **Recommendations**
 
 ### **For New Users:**
-Start with **Manual Mode** - it's the most stable and gives you full control.
+Start with **Manual Mode** - it's the most stable, gives you full control, and includes intelligent dialog responses.
 
 ### **For Hands-Free Use:**
-Use **Smart Mode** - automatic voice detection is perfect for voice notes.
+Use **Smart Mode** - automatic voice detection is perfect for voice notes (note: no dialog integration).
 
 ### **For Quick Testing:**
 Use **Simple Mode** - fast startup and basic functionality.
 
-### **For Production:**
+### **For Production with Dialog:**
+Use **Manual Mode** - complete dialog integration with intelligent responses and context management.
+
+### **For Advanced AI Features:**
 Use **Full Mode** - complete AI capabilities (if your system can handle it).
 
 ### **For Troubleshooting:**
@@ -328,7 +471,9 @@ Use **Test Mode** - diagnose any issues with your setup.
 4. **Try the commands:**
    - Type `s` + Enter to start recording
    - Speak your message
-   - Type `t` + Enter to stop and get transcript
+   - Type `t` + Enter to stop and get intelligent response
+   - Type `c` + Enter to view conversation context
+   - Type `clear` + Enter to clear conversation history
    - Type `q` + Enter to quit
 
-**You're ready to use the Voice Bot!** 🎉
+**You're ready to use the Voice Bot with intelligent dialog integration!** 🎉
