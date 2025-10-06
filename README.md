@@ -434,6 +434,107 @@ python test_*.py
 - [PyAudio](https://pypi.org/project/PyAudio/) for audio processing
 - macOS system TTS for reliable voice output
 
+## ⚠️ Known Limitations & Shortcomings
+
+### 🔴 Critical Security Issues
+
+**Input Validation & Command Injection:**
+- User input is not properly sanitized before processing
+- Potential command injection vulnerabilities in subprocess calls
+- No rate limiting on user commands or requests
+- Audio data and conversation history lack encryption
+
+**Data Privacy Concerns:**
+- Temporary audio files may persist on disk without cleanup
+- No data retention policies for conversation history
+- User conversations are stored in plain text
+
+### 🟠 Performance & Resource Issues
+
+**Memory Management:**
+- Models can be loaded multiple times without proper cleanup
+- Memory usage can exceed 15GB in full mode
+- Audio buffers accumulate without size limits
+- No garbage collection strategy for long-running sessions
+
+**Blocking Operations:**
+- Synchronous model loading can hang the entire application
+- No timeout mechanisms for speech recognition operations
+- Blocking TTS operations can freeze the user interface
+- Continuous audio processing without optimization
+
+### 🟡 Architecture & Design Limitations
+
+**Code Quality Issues:**
+- Tight coupling between components with poor separation of concerns
+- Hardcoded dependencies and configuration values
+- Generic exception handling that may mask real issues
+- Inconsistent error reporting across different modules
+
+**Platform Dependencies:**
+- Heavy macOS-specific code and system calls
+- Hardcoded macOS paths throughout the codebase
+- Limited cross-platform compatibility
+- No Windows or Linux support
+
+### 🔵 Testing & Quality Assurance
+
+**Test Coverage Gaps:**
+- Heavy reliance on mocked tests that don't validate real functionality
+- Missing integration tests with actual audio hardware
+- Insufficient edge case coverage for production scenarios
+- No automated security testing or vulnerability scanning
+
+**Documentation Issues:**
+- Some installation instructions may be outdated
+- Missing comprehensive API documentation
+- Inconsistent version information across files
+
+### 🟢 Dependency & Maintenance Concerns
+
+**Security Vulnerabilities:**
+- Some dependencies may have known security issues
+- No automated dependency vulnerability scanning
+- Missing dependency pinning for critical packages
+- Outdated package versions in requirements
+
+**Maintenance Challenges:**
+- Large codebase with complex interdependencies
+- Multiple operation modes that increase maintenance burden
+- Extensive test suite that may be difficult to maintain
+- Platform-specific issues that are hard to debug remotely
+
+### 🔧 Technical Debt
+
+**Code Structure:**
+- Monolithic voice bot class handling multiple responsibilities
+- Magic numbers and hardcoded values scattered throughout code
+- Race conditions in audio processing and state management
+- Inconsistent naming conventions and code style
+
+**Resource Management:**
+- Improper cleanup of audio streams and model resources
+- No connection pooling or resource reuse strategies
+- Memory leaks in long-running sessions
+- Inefficient audio processing and buffering
+
+### 🎯 Recommendations for Production Use
+
+**Before Using in Production:**
+1. **Implement comprehensive input validation** and sanitization
+2. **Add encryption** for audio data and conversation storage
+3. **Implement proper resource cleanup** and memory management
+4. **Add security scanning** to CI/CD pipeline
+5. **Create comprehensive integration tests** with real hardware
+6. **Implement proper configuration management**
+7. **Add cross-platform compatibility**
+8. **Establish data retention and privacy policies**
+
+**Current Status:**
+- ✅ **Suitable for**: Development, experimentation, and learning
+- ⚠️ **Use with caution**: Limited production scenarios with proper security review
+- ❌ **Not recommended**: High-security environments or public-facing applications
+
 ## 📞 Support
 
 For issues and questions:
